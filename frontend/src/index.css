@@ -4,6 +4,16 @@
 
 :root {
   color-scheme: dark;
+  --facility-base: #0a0d14;
+  --facility-surface: #0f1422;
+  --facility-elevated: #151c2e;
+  --facility-overlay: #1a233a;
+  --facility-border: #1e293b;
+  --facility-border-strong: #2e3d56;
+  --facility-cyan: #0ea5e9;
+  --facility-emerald: #10b981;
+  --facility-amber: #f59e0b;
+  --facility-crimson: #f43f5e;
 }
 
 body {
@@ -11,4 +21,84 @@ body {
   background-color: #0a0d14;
   color: #f1f5f9;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
+
+/* Global accessible focus rings */
+:focus-visible {
+  outline: 2px solid #0ea5e9;
+  outline-offset: 2px;
+}
+
+/* Custom terminal scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0d14;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2e3d56;
+}
+
+/* Tactile micro-grid background pattern */
+.facility-grid {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(30, 41, 59, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 41, 59, 0.25) 1px, transparent 1px);
+}
+
+/* Controlled CRT scanline overlay */
+.scanlines-overlay {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.2) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(14, 165, 233, 0.02),
+    rgba(0, 0, 0, 0),
+    rgba(16, 185, 129, 0.02)
+  );
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+/* Controlled text luminescences */
+.text-glow-cyan {
+  text-shadow: 0 0 12px rgba(14, 165, 233, 0.4);
+}
+
+.text-glow-emerald {
+  text-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+.text-glow-crimson {
+  text-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+}
+
+.text-glow-amber {
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+}
+
+/* Tabular numbers for telemetry, timers, and scores */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Facility default text selection */
+::selection {
+  background-color: rgba(14, 165, 233, 0.3);
+  color: #f1f5f9;
+}
+
+
