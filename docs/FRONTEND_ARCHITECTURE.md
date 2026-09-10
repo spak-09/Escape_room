@@ -172,21 +172,21 @@ The game shell maintains persistent gameplay state and situational awareness:
 
 ### 7. Extensible Room Architecture
 
-To ensure new rooms can be added without modifying the game shell, rooms adhere to a standardized interface:
+To ensure new rooms can be added without modifying the game shell, room components conform to a standardized contract (documented via JSDoc):
 
-```typescript
-interface RoomProps {
-  roomMetadata: {
-    id: string;
-    sectorNumber: number;
-    title: string;
-    topic: 'phishing' | 'passwords' | 'quishing' | 'social_engineering' | 'multi_threat';
-  };
-  challengeData: ChallengePayload;
-  onDecisionSubmit: (action: ChallengeAction) => Promise<void>;
-  onRequestHint: () => Promise<void>;
-  isSubmitting: boolean;
-}
+```javascript
+/**
+ * @typedef {Object} RoomProps
+ * @property {Object} roomMetadata
+ * @property {string} roomMetadata.id - e.g., 'room-01-inbox'
+ * @property {number} roomMetadata.sectorNumber - 1-indexed (1 to 5)
+ * @property {string} roomMetadata.title - e.g., 'The Inbox'
+ * @property {'phishing'|'password_security'|'qr_security'|'social_engineering'|'multi_threat'} roomMetadata.topic
+ * @property {Object} challengeData - Active sanitized challenge payload from server
+ * @property {function(string, Object=): Promise<void>} onDecisionSubmit - Dispatches actionId to server
+ * @property {function(): Promise<void>} onRequestHint - Requests hint with score deduction
+ * @property {boolean} isSubmitting - Loading indicator state during server validation
+ */
 ```
 
 The `RoomContainer` uses a registry pattern to mount the appropriate sector component dynamically:
@@ -211,14 +211,16 @@ Challenge content is purely data-driven. Challenge definitions sent from the bac
   "challengeId": "ch-phish-01",
   "topic": "phishing",
   "difficulty": "beginner",
-  "narrativePrompt": "A critical alert has arrived at the workstation. Verify its legitimacy before taking action.",
+  "prompt": "Inspect the newly arrived IT security advisory before choosing how to respond.",
   "evidence": {
     "type": "email",
-    "sender": "Security Operations <security@micr0soft-update.com>",
-    "replyTo": "bounces@attacker-c2.ru",
-    "subject": "URGENT: Mandatory Password Reset Required",
-    "receivedDate": "2026-09-10T11:20:00Z",
-    "bodyHtml": "<p>Your account has been flagged. <a href='http://185.220.101.4/reset'>Click here</a>.</p>",
+    "sender": "IT Support Center <support@micr0soft-update.com>",
+    "replyTo": "inbox-collector@shadow-c2.net",
+    "subject": "URGENT: Required Credential Resynchronization",
+    "receivedTime": "2026-09-10T11:45:00Z",
+    "body": "Security breach detected. Click the emergency link below to verify your facility workstation immediately.",
+    "linkTarget": "http://185.220.101.4/login.php",
+    "linkDisplayText": "https://security.microsoft.com/sync-session",
     "headers": {
       "spf": "FAIL",
       "dkim": "NONE",
@@ -226,9 +228,9 @@ Challenge content is purely data-driven. Challenge definitions sent from the bac
     }
   },
   "availableActions": [
-    { "id": "ACTION_QUARANTINE", "label": "Quarantine & Report to SOC", "variant": "primary" },
-    { "id": "ACTION_CLICK_LINK", "label": "Proceed to Reset Password", "variant": "danger" },
-    { "id": "ACTION_IGNORE", "label": "Ignore Message", "variant": "ghost" }
+    { "actionId": "ACTION_QUARANTINE", "label": "Quarantine & Report Phishing", "variant": "primary" },
+    { "actionId": "ACTION_CLICK_LINK", "label": "Click Link to Sync Session", "variant": "danger" },
+    { "actionId": "ACTION_IGNORE", "label": "Ignore Transmission", "variant": "ghost" }
   ]
 }
 ```
@@ -307,19 +309,21 @@ api.interceptors.request.use((config) => {
 
 // Response Interceptor: Transparent Token Refresh
 api.interceptors.response.use(
-  (response) => response.data,
+  (response) => response.data, // Unwraps axios envelope, returning { success: true, data: ... }
   async (error) => {
     const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const { data } = await axios.post(
+        const refreshResponse = await axios.post(
           `${api.defaults.baseURL}/auth/refresh`,
           {},
           { withCredentials: true }
         );
-        setInMemoryAccessToken(data.accessToken);
-        originalRequest.headers.Authorization = `Bearer ${data.accessToken}`;
+        // Backend returns { success: true, data: { accessToken: "..." } }
+        const newAccessToken = refreshResponse.data.data.accessToken;
+        setInMemoryAccessToken(newAccessToken);
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
         return api(originalRequest);
       } catch (refreshErr) {
         handleLogoutRedirect();
@@ -336,10 +340,10 @@ api.interceptors.response.use(
 ### 14. Authentication State
 
 * Stored in `AuthContext`:
-  * `user`: `{ id, username, email, role }` or `null`.
-  * `accessToken`: Kept in module memory (never in `localStorage`).
-  * `isAuthenticated`: Computed boolean.
-  * `isLoading`: True during initial session bootstrap.
+  * `user`: Server returns `{ _id, username, email, role, createdAt, updatedAt }`. Context exposes `user` and provides convenient `id = user._id` alias.
+  * `accessToken`: Kept in module memory (never in `localStorage` or `sessionStorage`).
+  * `isAuthenticated`: Computed boolean (`Boolean(accessToken && user)`).
+  * `isLoading`: True during initial session bootstrap / token verification.
 
 ---
 
@@ -377,7 +381,7 @@ Framer Motion is configured with centralized variants (`/src/utils/motionVariant
 
 ### 19. Accessibility (a11y) Architecture
 
-* **Keyboard Navigation**: Focus traps in all modals via `@floating-ui/react` or manual tab loops.
+* **Keyboard Navigation**: Focus traps in all modals via native React keyboard event listeners and tab loops (preserving zero unapproved dependencies).
 * **ARIA Live Regions**: An off-screen `aria-live="polite"` container announces HUD status changes:
   ```jsx
   <div className="sr-only" aria-live="assertive" role="alert">

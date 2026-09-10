@@ -46,6 +46,12 @@ All responses follow standardized JSON structures:
 }
 ```
 
+### Rate Limiting Policy
+* **Global API Limit**: 120 requests per minute per IP (`apiLimiter`).
+* **Authentication Limit** (`/api/v1/auth/*`): 10 attempts per 15-minute window per IP (`authLimiter`).
+* **Challenge Limit** (`/api/v1/challenges/*/submit`): 30 actions per minute per session (`challengeLimiter`).
+* **Violation Response**: HTTP 429 Too Many Requests with error code `RATE_LIMIT_EXCEEDED`.
+
 ---
 
 ## 3. Endpoints Catalog & Contract Specifications

@@ -105,7 +105,7 @@ All endpoints are prefixed by `/api/v1`:
 | `POST` | `/auth/register` | No | Create player account with bcrypt password |
 | `POST` | `/auth/login` | No | Authenticate; sets HttpOnly refresh cookie; returns access token |
 | `POST` | `/auth/refresh` | No | Exchange valid refresh cookie for new access token |
-| `POST` | `/auth/logout` | Yes | Clear refresh cookie |
+| `POST` | `/auth/logout` | No | Clear refresh cookie (no Bearer token required) |
 | `GET` | `/auth/me` | Yes | Fetch authenticated user profile |
 | `POST` | `/assessment` | Yes | Submit 4-topic baseline confidence ratings |
 | `GET` | `/assessment` | Yes | Fetch user baseline profile |
@@ -338,17 +338,20 @@ function calculateScore({ basePoints, difficulty, timeElapsed, targetTime, hintC
 The engine evaluates signals stored across the active session:
 
 ```javascript
-function determineInterventionLevel({ topic, historicalMistakesInTopic, selfConfidenceRating }) {
+function determineInterventionLevel({ historicalMistakesInTopic = 0, selfConfidenceRating = 3, hintsUsed = 0, attemptCount = 1 }) {
   if (historicalMistakesInTopic === 0) {
     return { level: 1, type: 'NONE' };
   }
-  if (historicalMistakesInTopic === 1) {
-    return { level: 2, type: 'CONTEXTUAL_EXPLANATION' };
+  // Critical pattern failure: 3+ mistakes in topic or 4+ attempts
+  if (historicalMistakesInTopic >= 3 || attemptCount >= 4) {
+    return { level: 4, type: 'GUIDED_RETRY' };
   }
-  if (historicalMistakesInTopic === 2 || (historicalMistakesInTopic === 1 && selfConfidenceRating <= 2)) {
+  // Accelerated intervention: 2 mistakes OR early struggle (1 mistake with low confidence <= 2)
+  if (historicalMistakesInTopic >= 2 || (historicalMistakesInTopic === 1 && selfConfidenceRating <= 2)) {
     return { level: 3, type: 'MICRO_TUTORIAL' };
   }
-  return { level: 4, type: 'GUIDED_RETRY' };
+  // Isolated mistake with normal/high confidence
+  return { level: 2, type: 'CONTEXTUAL_EXPLANATION' };
 }
 ```
 
@@ -449,7 +452,7 @@ The global error middleware intercepts all errors:
 
 Configured via `express-rate-limit`:
 * Global: 120 req/min per IP.
-* Auth Routes (`/api/v1/auth/*`): 5 req/15min per IP.
+* Auth Routes (`/api/v1/auth/*`): 10 req/15min per IP.
 * Challenge Submission (`/api/v1/challenges/*/submit`): 30 req/min per active session.
 
 ---

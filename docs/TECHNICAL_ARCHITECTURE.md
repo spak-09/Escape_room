@@ -376,7 +376,10 @@ erDiagram
         int finalScore
         int totalDurationSeconds
         float accuracyPercentage
+        int livesRemaining
+        array badgesEarned
         date recordedAt
+        boolean isVerified
     }
 
     ACHIEVEMENT {
@@ -384,6 +387,7 @@ erDiagram
         ObjectId userId FK
         string badgeCode
         string title
+        string description
         date earnedAt
     }
 ```
@@ -446,6 +450,7 @@ POST   /api/v1/challenges/:id/submit       -> Submit evidence decision for valid
 POST   /api/v1/challenges/:id/hint         -> Request hint for active challenge (incurs penalty)
 
 GET    /api/v1/dashboard/summary           -> Get player statistics, active runs, and badges
+GET    /api/v1/reports                     -> Root stub returning HTTP 501 (preserves phase expectations)
 GET    /api/v1/reports/:sessionId          -> Get final Cybersecurity Performance Report
 GET    /api/v1/leaderboard                 -> Get top verified escape records
 ```
@@ -515,7 +520,7 @@ Any schema violation halts the pipeline immediately and returns a formatted 400 
 
 Built using `express-rate-limit`:
 * **Global API Limiter**: 120 requests per minute per IP.
-* **Authentication Limiter**: 5 login/registration requests per 15-minute window per IP.
+* **Authentication Limiter**: 10 login/registration requests per 15-minute window per IP.
 * **Challenge Submission Limiter**: 30 challenge actions per minute per session to prevent automated brute-force solving.
 
 ---
