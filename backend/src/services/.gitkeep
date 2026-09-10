@@ -1,0 +1,2 @@
+// Services directory - Domain business logic and server authority
+// (authService, sessionService, scoringService, etc.)

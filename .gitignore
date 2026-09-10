@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Production builds
+dist/
+build/
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.test
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.log
+
+# Editor and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Vitest / Coverage
+coverage/

@@ -1,0 +1,2 @@
+// Controllers directory - HTTP request handling adapters
+// To be populated in Phase 1+ (authController, sessionController, etc.)
