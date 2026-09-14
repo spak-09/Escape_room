@@ -12,8 +12,12 @@ export const clearInMemoryAccessToken = () => {
   inMemoryAccessToken = null;
 };
 
+const apiBaseUrl =
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? '/api/v1' : 'http://localhost:5000/api/v1');
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/v1',
+  baseURL: apiBaseUrl,
   withCredentials: true, // Required for HttpOnly refresh cookies
   headers: {
     'Content-Type': 'application/json',
