@@ -43,6 +43,17 @@ if (env.NODE_ENV !== 'test') {
   app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
 }
 
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    data: {
+      service: 'Digital Safety Escape Room API',
+      status: 'operational',
+      apiRoot: '/api/v1',
+    },
+  });
+});
+
 // 7. Mount API Router at /api/v1
 app.use('/api/v1', apiRouter);
 
