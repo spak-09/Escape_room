@@ -23,7 +23,8 @@ export const clearInMemoryAccessToken = () => {
  * so it consistently targets the authoritative API root (/api/v1) and strips any trailing slashes.
  */
 export const resolveBaseURL = (rawUrl = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) || '') => {
-  const url = (rawUrl || 'http://localhost:5000/api/v1').trim();
+  const defaultUrl = (typeof import.meta !== 'undefined' && import.meta.env?.PROD) ? '/api/v1' : 'http://localhost:5000/api/v1';
+  const url = (rawUrl || defaultUrl).trim();
   const stripped = url.replace(/\/+$/, '');
   if (stripped.includes('/api/v1')) {
     return stripped;
