@@ -26,9 +26,9 @@ export default function GameGuard({ children }) {
     );
   }
 
-  // If no active in-progress session, route to facility lockdown entry
+  // If no active in-progress session, route to dashboard
   if (!session || session.status !== 'IN_PROGRESS') {
-    return <Navigate to="/facility-entry" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   // Check sector prerequisite enforcement

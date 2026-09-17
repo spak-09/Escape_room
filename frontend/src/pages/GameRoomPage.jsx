@@ -80,9 +80,9 @@ export default function GameRoomPage() {
       clearLastSubmissionResult();
       const sid = session?.sessionId;
       if (sid) {
-        navigate(`/game/escape-result/${sid}`);
+        navigate(`/game/escape-result/${sid}`, { replace: true });
       } else {
-        navigate('/dashboard');
+        navigate('/dashboard', { replace: true });
       }
       return;
     }

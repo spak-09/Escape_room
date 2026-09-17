@@ -119,11 +119,8 @@ export default function EscapeResultPage() {
           </div>
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <TerminalButton variant="ghost" onClick={() => navigate('/dashboard')} icon={Home}>
-              CADET HUB
-            </TerminalButton>
-            <TerminalButton variant="primary" onClick={() => navigate('/facility-entry')} icon={RotateCcw}>
-              NEW ESCAPE RUN
+            <TerminalButton variant="primary" onClick={() => navigate('/dashboard')} icon={Home}>
+              RETURN TO DASHBOARD
             </TerminalButton>
           </div>
         </div>
@@ -404,14 +401,8 @@ export default function EscapeResultPage() {
             </Link>
 
             <Link to="/dashboard">
-              <TerminalButton variant="secondary" size="md" icon={Home}>
-                CADET DASHBOARD
-              </TerminalButton>
-            </Link>
-
-            <Link to="/facility-entry">
-              <TerminalButton variant="primary" size="md" icon={RotateCcw}>
-                NEW ESCAPE RUN
+              <TerminalButton variant="primary" size="md" icon={Home}>
+                RETURN TO DASHBOARD
               </TerminalButton>
             </Link>
           </div>
