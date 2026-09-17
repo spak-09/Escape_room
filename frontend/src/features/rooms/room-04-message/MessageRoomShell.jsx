@@ -169,7 +169,7 @@ export default function MessageRoomShell({
           <div className="space-y-4">
             {/* View A: Transceiver Message Thread */}
             {activeForensicTool === 'message' && (
-              <div className="rounded-lg border border-slate-800 bg-[#0a0d18] overflow-hidden shadow-xl">
+              <div className="rounded-lg border border-slate-800 bg-[#080909] overflow-hidden shadow-xl">
                 {/* Header Information Bar */}
                 <div className="p-4 bg-slate-950/90 border-b border-slate-800 flex items-center justify-between">
                   <div className="flex items-center gap-3">

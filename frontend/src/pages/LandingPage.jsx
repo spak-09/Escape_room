@@ -170,7 +170,7 @@ export default function LandingPage() {
       </section>
 
       {/* 5 Sectors Overview */}
-      <section className="border-t border-slate-800/80 bg-[#090d16] py-16 sm:py-20">
+      <section className="border-t border-slate-800/80 bg-[#0B0C0D] py-16 sm:py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="font-mono text-xs font-bold text-cyan-400 tracking-wider uppercase">

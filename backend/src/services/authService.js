@@ -101,29 +101,34 @@ export async function refreshAccessToken(refreshToken) {
     throw new AppError('Refresh token is required', 401, 'TOKEN_MISSING');
   }
 
+  // Only signature/expiry verification failures map to token errors. Wrapping
+  // the whole flow would mask intentional errors (e.g. USER_NOT_FOUND) as a
+  // misleading "invalid signature", making session problems impossible to
+  // diagnose from the client.
+  let decoded;
   try {
-    const decoded = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET);
-
-    const user = await User.findById(decoded.userId);
-    if (!user) {
-      throw new AppError('Account associated with this token no longer exists', 401, 'USER_NOT_FOUND');
-    }
-
-    const accessToken = jwt.sign(
-      {
-        userId: user._id.toString(),
-        username: user.username,
-        role: user.role,
-      },
-      env.JWT_SECRET,
-      { expiresIn: '15m' }
-    );
-
-    return { accessToken };
+    decoded = jwt.verify(refreshToken, env.JWT_REFRESH_SECRET);
   } catch (err) {
     if (err.name === 'TokenExpiredError') {
       throw new AppError('Refresh token has expired. Please log in again.', 401, 'TOKEN_EXPIRED');
     }
     throw new AppError('Invalid refresh token signature or payload', 401, 'TOKEN_INVALID');
   }
+
+  const user = await User.findById(decoded.userId);
+  if (!user) {
+    throw new AppError('Account associated with this token no longer exists', 401, 'USER_NOT_FOUND');
+  }
+
+  const accessToken = jwt.sign(
+    {
+      userId: user._id.toString(),
+      username: user.username,
+      role: user.role,
+    },
+    env.JWT_SECRET,
+    { expiresIn: '15m' }
+  );
+
+  return { accessToken };
 }

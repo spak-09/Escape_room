@@ -40,8 +40,8 @@ export default class ErrorBoundary extends Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-[#07090e] text-slate-100 flex items-center justify-center p-4 font-mono select-none">
-          <div className="w-full max-w-xl rounded-lg border-2 border-red-500/60 bg-[#0d121f] shadow-tactical-crimson p-6 sm:p-8 space-y-6">
+        <div className="min-h-screen bg-[#080909] text-slate-100 flex items-center justify-center p-4 font-mono select-none">
+          <div className="w-full max-w-xl rounded-lg border-2 border-red-500/60 bg-[#181A1D] shadow-tactical-crimson p-6 sm:p-8 space-y-6">
             {/* Header */}
             <div className="flex items-center gap-3 border-b border-red-500/30 pb-4">
               <div className="w-10 h-10 rounded bg-red-950/60 border border-red-500/50 flex items-center justify-center text-red-400">

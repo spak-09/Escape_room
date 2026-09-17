@@ -108,7 +108,7 @@ export default function AssessmentPage() {
         variant="cyan"
       >
         {/* Briefing Text */}
-        <div className="mb-6 text-xs text-slate-300 bg-[#0c121e] border border-slate-800 p-4 rounded leading-relaxed space-y-1">
+        <div className="mb-6 text-xs text-slate-300 bg-[#1E2023] border border-slate-800 p-4 rounded leading-relaxed space-y-1">
           <p className="font-bold text-sky-400 uppercase tracking-wide">
             PRE-ENTRY PROTOCOL NOTICE
           </p>
@@ -133,7 +133,7 @@ export default function AssessmentPage() {
             return (
               <div
                 key={topic.key}
-                className="p-4 rounded border border-slate-800/90 bg-[#0a0f1c] space-y-3 transition-colors hover:border-slate-700"
+                className="p-4 rounded border border-slate-800/90 bg-[#121416] space-y-3 transition-colors hover:border-slate-700"
               >
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                   <h3 className="font-bold text-slate-200 tracking-wide uppercase">
@@ -196,7 +196,7 @@ export default function AssessmentPage() {
           </div>
 
           {/* Profile Summary Ribbon */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded border border-slate-800 bg-[#080d1a]">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded border border-slate-800 bg-[#0B0C0D]">
             <div>
               <span className="text-slate-500 text-[10px] uppercase block">CALIBRATED CLEARANCE PROFILE:</span>
               <span className="text-sky-300 font-bold text-xs">

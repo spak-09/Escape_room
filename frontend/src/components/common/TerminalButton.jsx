@@ -3,7 +3,7 @@ import { soundEngine } from '../../utils/soundEngine';
 
 /**
  * TerminalButton UI Primitive
- * Cyber/military themed interactive button with sound feedback and loading state.
+ * Industrial facility control with sound feedback and loading state.
  */
 export default function TerminalButton({
   children,
@@ -25,7 +25,7 @@ export default function TerminalButton({
     if (onClick) onClick(e);
   };
 
-  const baseStyles = 'relative inline-flex items-center justify-center font-mono font-semibold tracking-wider uppercase transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a0d14] disabled:opacity-40 disabled:cursor-not-allowed select-none active:scale-[0.98] border';
+  const baseStyles = 'relative inline-flex items-center justify-center font-mono font-semibold tracking-wider uppercase transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B0C0D] disabled:opacity-40 disabled:cursor-not-allowed select-none active:scale-[0.98] border';
 
   const sizeStyles = {
     sm: 'text-xs px-3 py-1.5 gap-1.5 rounded',
@@ -34,12 +34,13 @@ export default function TerminalButton({
   };
 
   const variantStyles = {
-    primary: 'bg-sky-950/50 text-sky-300 border-sky-500/40 hover:bg-sky-900/60 hover:border-sky-400 hover:shadow-tactical-cyan focus-visible:ring-sky-400',
+    primary: 'bg-amber-400 text-slate-950 border-amber-400 hover:bg-amber-300 hover:border-amber-300 hover:shadow-tactical-amber focus-visible:ring-amber-400',
+    secondary: 'bg-slate-800/70 text-slate-200 border-slate-700 hover:bg-slate-700/60 hover:text-amber-300 hover:border-amber-500/60 focus-visible:ring-amber-400',
     emerald: 'bg-emerald-950/50 text-emerald-300 border-emerald-500/40 hover:bg-emerald-900/60 hover:border-emerald-400 hover:shadow-tactical-emerald focus-visible:ring-emerald-400',
     terminal: 'bg-emerald-950/50 text-emerald-300 border-emerald-500/40 hover:bg-emerald-900/60 hover:border-emerald-400 hover:shadow-tactical-emerald focus-visible:ring-emerald-400',
     danger: 'bg-rose-950/50 text-rose-300 border-rose-500/40 hover:bg-rose-900/60 hover:border-rose-400 hover:shadow-tactical-crimson focus-visible:ring-rose-400',
     warning: 'bg-amber-950/50 text-amber-300 border-amber-500/40 hover:bg-amber-900/60 hover:border-amber-400 hover:shadow-tactical-amber focus-visible:ring-amber-400',
-    ghost: 'bg-slate-900/50 text-slate-300 border-slate-700/60 hover:bg-slate-800/60 hover:text-slate-100 hover:border-slate-500 focus-visible:ring-slate-400',
+    ghost: 'bg-slate-900/50 text-slate-300 border-slate-700/60 hover:bg-slate-800/60 hover:text-amber-300 hover:border-amber-500/40 focus-visible:ring-amber-400',
   };
 
   return (

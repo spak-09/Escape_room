@@ -2,32 +2,62 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================================
+   INDUSTRIAL REDACTED — CLASSIFIED DIGITAL SECURITY FACILITY
+   Design tokens. Palette-only refinement: no layout, motion, timing or
+   behavior changes. Legacy token names are retained as aliases.
+   ========================================================================= */
 :root {
   color-scheme: dark;
-  --facility-base: #0a0d14;
-  --facility-surface: #0f1422;
-  --facility-elevated: #151c2e;
-  --facility-overlay: #1a233a;
-  --facility-border: #1e293b;
-  --facility-border-strong: #2e3d56;
-  --facility-cyan: #0ea5e9;
-  --facility-emerald: #10b981;
-  --facility-amber: #f59e0b;
-  --facility-crimson: #f43f5e;
+
+  /* Neutral surface elevation hierarchy */
+  --facility-base: #0b0c0d;
+  --facility-deep: #080909;
+  --facility-surface: #121416;
+  --facility-surface-2: #181a1d;
+  --facility-elevated: #1e2023;
+  --facility-overlay: #1e2023;
+
+  /* Discipline borders */
+  --facility-border: #2a2d30;
+  --facility-border-strong: #3a3e42;
+  --facility-border-active: #d69a45;
+
+  /* Typographic contrast hierarchy */
+  --facility-ink: #e7e4dc;
+  --facility-steel: #8b9096;
+  --facility-muted: #6f747a;
+  --facility-subtle: #555a60;
+
+  /* Primary accent — industrial amber */
+  --facility-amber: #d69a45;
+  --facility-amber-bright: #e6b15a;
+  --facility-amber-deep: #c08434;
+
+  /* Status */
+  --facility-success: #78a878;
+  --facility-warning: #d69a45;
+  --facility-danger: #c85c58;
+  --facility-info: #8fa6b8;
+
+  /* Legacy aliases (kept so existing references still resolve) */
+  --facility-cyan: #d69a45;
+  --facility-emerald: #78a878;
+  --facility-crimson: #c85c58;
 }
 
 body {
   margin: 0;
-  background-color: #0a0d14;
-  color: #f1f5f9;
+  background-color: var(--facility-base);
+  color: var(--facility-ink);
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
 }
 
-/* Global accessible focus rings */
+/* Global accessible focus rings — amber edge highlight */
 :focus-visible {
-  outline: 2px solid #0ea5e9;
+  outline: 2px solid var(--facility-amber);
   outline-offset: 2px;
 }
 
@@ -38,56 +68,56 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0d14;
+  background: var(--facility-base);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: var(--facility-border);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2e3d56;
+  background: var(--facility-border-strong);
 }
 
-/* Tactile micro-grid background pattern */
+/* Tactile micro-grid background pattern (structural alignment grid) */
 .facility-grid {
   background-size: 24px 24px;
-  background-image: 
-    linear-gradient(to right, rgba(30, 41, 59, 0.25) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(30, 41, 59, 0.25) 1px, transparent 1px);
+  background-image:
+    linear-gradient(to right, rgba(58, 62, 66, 0.32) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(58, 62, 66, 0.32) 1px, transparent 1px);
 }
 
-/* Controlled CRT scanline overlay */
+/* Controlled CRT scanline overlay — structure preserved, hues neutralised */
 .scanlines-overlay {
   background: linear-gradient(
-    rgba(18, 16, 16, 0) 50%, 
+    rgba(18, 16, 16, 0) 50%,
     rgba(0, 0, 0, 0.2) 50%
   ), linear-gradient(
     90deg,
-    rgba(14, 165, 233, 0.02),
+    rgba(214, 154, 69, 0.02),
     rgba(0, 0, 0, 0),
-    rgba(16, 185, 129, 0.02)
+    rgba(139, 144, 150, 0.02)
   );
   background-size: 100% 3px, 6px 100%;
   pointer-events: none;
 }
 
-/* Controlled text luminescences */
+/* Restrained luminescence — ambient amber, no halos */
 .text-glow-cyan {
-  text-shadow: 0 0 12px rgba(14, 165, 233, 0.4);
+  text-shadow: 0 0 10px rgba(214, 154, 69, 0.24);
 }
 
 .text-glow-emerald {
-  text-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+  text-shadow: 0 0 10px rgba(120, 168, 120, 0.22);
 }
 
 .text-glow-crimson {
-  text-shadow: 0 0 12px rgba(244, 63, 94, 0.4);
+  text-shadow: 0 0 10px rgba(200, 92, 88, 0.22);
 }
 
 .text-glow-amber {
-  text-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+  text-shadow: 0 0 10px rgba(214, 154, 69, 0.24);
 }
 
 /* Tabular numbers for telemetry, timers, and scores */
@@ -97,8 +127,6 @@ body {
 
 /* Facility default text selection */
 ::selection {
-  background-color: rgba(14, 165, 233, 0.3);
-  color: #f1f5f9;
+  background-color: rgba(214, 154, 69, 0.28);
+  color: var(--facility-ink);
 }
-
-

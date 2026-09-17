@@ -116,7 +116,7 @@ export default function InboxRoomShell({
           </div>
 
           {/* Email Client Container */}
-          <div className="rounded-lg border border-slate-800 bg-[#0a0d18] overflow-hidden shadow-xl">
+          <div className="rounded-lg border border-slate-800 bg-[#080909] overflow-hidden shadow-xl">
             {/* Email Header Bar */}
             <div className="p-4 bg-slate-950/90 border-b border-slate-800 space-y-2.5">
               {/* Sender Line */}

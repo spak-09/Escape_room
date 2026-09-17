@@ -17,11 +17,11 @@ export default function MainLayout() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0a0d14] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="min-h-screen flex flex-col bg-[#0B0C0D] text-slate-100 selection:bg-cyan-500/30 selection:text-cyan-200">
       <SkipToContent targetId="main-content" />
 
       {/* Top Facility Header Bar */}
-      <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-[#0d121f]/90 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-[#121416]/90 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Logo & Facility Identity */}
           <Link
@@ -124,7 +124,7 @@ export default function MainLayout() {
       </main>
 
       {/* Facility Footer */}
-      <footer className="border-t border-slate-800/60 bg-[#070a10] py-6 text-center text-xs font-mono text-slate-500">
+      <footer className="border-t border-slate-800/60 bg-[#080909] py-6 text-center text-xs font-mono text-slate-500">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <span>SECURE FACILITY INCIDENT SIMULATOR // CLASSIFIED CADET TRAINING</span>
           <span>EST. 2026 // ZERO CLIENT-SIDE AUTHORITY VALIDATED</span>

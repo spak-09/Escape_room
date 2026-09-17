@@ -59,7 +59,7 @@ export default function GameHeader() {
 
   return (
     <>
-      <header className="h-16 border-b border-slate-800 bg-[#0c101c]/95 backdrop-blur-md px-3 sm:px-6 flex items-center justify-between z-20 shrink-0">
+      <header className="h-16 border-b border-slate-800 bg-[#121416]/95 backdrop-blur-md px-3 sm:px-6 flex items-center justify-between z-20 shrink-0">
         {/* Left: Emergency Exit & Sector Title */}
         <div className="flex items-center gap-3">
           <button
@@ -128,8 +128,8 @@ export default function GameHeader() {
                   className={`w-4 h-4 transition-all duration-300 ${
                     isAlive
                       ? isCriticalOne
-                        ? 'text-red-500 fill-red-500 animate-heartbeat drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]'
-                        : 'text-red-500 fill-red-500 drop-shadow-[0_0_4px_rgba(239,68,68,0.5)]'
+                        ? 'text-red-500 fill-red-500 animate-heartbeat drop-shadow-[0_0_6px_rgba(200,92,88,0.45)]'
+                        : 'text-red-500 fill-red-500 drop-shadow-[0_0_3px_rgba(200,92,88,0.28)]'
                       : 'text-slate-700 fill-slate-900/40 opacity-40'
                   }`}
                 />

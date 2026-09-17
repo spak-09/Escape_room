@@ -157,7 +157,7 @@ export default function GameRoomPage() {
     Boolean(lastSubmissionResult?.learningIntervention);
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-[#080c16] text-slate-100">
+    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-[#0B0C0D] text-slate-100">
       {/* Top Diegetic HUD */}
       <GameHeader />
 

@@ -11,7 +11,7 @@ export default function SkeletonLoader({
 }) {
   if (variant === 'card') {
     return (
-      <div className={`rounded-lg border border-slate-800 bg-[#0f1422] p-6 space-y-4 animate-pulse ${className}`}>
+      <div className={`rounded-lg border border-slate-800 bg-[#121416] p-6 space-y-4 animate-pulse ${className}`}>
         <div className="h-4 bg-slate-800/80 rounded w-1/3" />
         <div className="space-y-2 pt-2">
           <div className="h-3 bg-slate-800/50 rounded w-full" />

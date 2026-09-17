@@ -126,7 +126,7 @@ export default function DashboardPage() {
 
       {/* HIGHEST PRIORITY HERO MODULE: CONTINUE ESCAPE */}
       {activeSession ? (
-        <div className="relative rounded-xl border-2 border-emerald-500/80 bg-gradient-to-r from-[#0d1624] to-[#0a101d] p-6 sm:p-8 shadow-neon-emerald/20 overflow-hidden">
+        <div className="relative rounded-xl border-2 border-emerald-500/80 bg-gradient-to-r from-[#141A15] to-[#0E110E] p-6 sm:p-8 shadow-tactical-emerald overflow-hidden">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
             <div className="space-y-3 max-w-2xl">
               <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-widest">
@@ -200,7 +200,7 @@ export default function DashboardPage() {
         </div>
       ) : (
         /* Standby Hero: Ready for New Escape Run */
-        <div className="rounded-xl border border-cyan-500/40 bg-gradient-to-r from-[#0d1524] to-[#090d16] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-neon-cyan/10">
+        <div className="rounded-xl border border-cyan-500/40 bg-gradient-to-r from-[#1A150E] to-[#0B0C0D] p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-tactical-amber/40">
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-cyan-400 text-xs font-bold uppercase tracking-wider">
               <Shield className="w-4 h-4 text-cyan-400" />

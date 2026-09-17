@@ -84,7 +84,7 @@ export default function EscapeResultPage() {
   // Loading State
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#07090f] flex items-center justify-center font-mono text-xs text-cyan-400 p-4">
+      <div className="min-h-screen bg-[#080909] flex items-center justify-center font-mono text-xs text-cyan-400 p-4">
         <div className="text-center space-y-3">
           <svg className="animate-spin h-8 w-8 text-cyan-400 mx-auto" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
@@ -102,8 +102,8 @@ export default function EscapeResultPage() {
   // Error State (Incomplete session, 403 Forbidden, or 404)
   if (errorMsg || !report) {
     return (
-      <div className="min-h-screen bg-[#07090f] text-slate-100 flex items-center justify-center p-4 font-mono">
-        <div className="max-w-lg w-full rounded-lg border border-red-500/60 bg-[#0d121f] p-8 text-center space-y-4 shadow-neon-crimson">
+      <div className="min-h-screen bg-[#080909] text-slate-100 flex items-center justify-center p-4 font-mono">
+        <div className="max-w-lg w-full rounded-lg border border-red-500/60 bg-[#181A1D] p-8 text-center space-y-4 shadow-tactical-crimson">
           <ShieldAlert className="w-12 h-12 text-red-400 mx-auto animate-pulse" />
           <div>
             <h2 className="text-base font-bold text-red-300 uppercase tracking-wider">
@@ -135,7 +135,7 @@ export default function EscapeResultPage() {
   const badgesEarned = Array.isArray(report.badgesEarned) ? report.badgesEarned : [];
 
   return (
-    <div className="min-h-screen bg-[#07090f] text-slate-100 py-10 px-4 sm:px-6 lg:px-8 font-mono relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#080909] text-slate-100 py-10 px-4 sm:px-6 lg:px-8 font-mono relative overflow-x-hidden">
       {/* Background Decorative Scanlines & Glow */}
       <div className="fixed inset-0 bg-emerald-950/5 pointer-events-none" />
       <div className="max-w-6xl mx-auto space-y-8 relative z-10">
@@ -144,7 +144,7 @@ export default function EscapeResultPage() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="rounded-lg border-2 border-emerald-500/60 bg-[#0d1522] p-6 sm:p-8 shadow-neon-emerald/20 flex flex-col md:flex-row md:items-center justify-between gap-6"
+          className="rounded-lg border-2 border-emerald-500/60 bg-[#121416] p-6 sm:p-8 shadow-tactical-emerald flex flex-col md:flex-row md:items-center justify-between gap-6"
         >
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-widest">
@@ -186,7 +186,7 @@ export default function EscapeResultPage() {
                   key={heart}
                   className={`w-4 h-4 ${
                     heart <= (report.livesRemaining ?? 3)
-                      ? 'text-red-500 fill-red-500 drop-shadow-[0_0_6px_rgba(239,68,68,0.6)]'
+                      ? 'text-red-500 fill-red-500 drop-shadow-[0_0_5px_rgba(200,92,88,0.35)]'
                       : 'text-slate-700 opacity-40'
                   }`}
                 />

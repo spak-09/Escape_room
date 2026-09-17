@@ -66,12 +66,12 @@ export default function FacilityIntroPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#07090f] text-slate-100 flex items-center justify-center p-4 relative overflow-hidden font-mono">
+    <div className="min-h-screen bg-[#080909] text-slate-100 flex items-center justify-center p-4 relative overflow-hidden font-mono">
       {/* Red emergency scanline glow */}
       <div className="absolute inset-0 bg-red-950/10 pointer-events-none animate-pulse-fast" />
 
       {/* Center Terminal Box */}
-      <div className="relative z-10 w-full max-w-2xl rounded-lg border-2 border-red-500/60 bg-[#0d111d] shadow-neon-crimson p-6 sm:p-8 space-y-6">
+      <div className="relative z-10 w-full max-w-2xl rounded-lg border-2 border-red-500/60 bg-[#181A1D] shadow-tactical-crimson p-6 sm:p-8 space-y-6">
         {/* Terminal Header */}
         <div className="flex items-center justify-between border-b border-red-500/40 pb-4">
           <div className="flex items-center gap-3">

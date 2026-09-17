@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0d14] flex items-center justify-center font-mono text-xs text-cyan-400">
+      <div className="min-h-screen bg-[#0B0C0D] flex items-center justify-center font-mono text-xs text-cyan-400">
         <div className="flex items-center gap-2">
           <svg className="animate-spin h-5 w-5 text-cyan-400" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />

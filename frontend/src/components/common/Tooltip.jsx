@@ -32,7 +32,7 @@ export default function Tooltip({
       {isVisible && content && (
         <div
           role="tooltip"
-          className={`absolute z-40 whitespace-nowrap rounded border border-slate-700 bg-[#0c121e] px-2.5 py-1 text-[11px] font-mono text-cyan-200 shadow-tactical-cyan pointer-events-none ${positionClasses[position] || positionClasses.top}`}
+          className={`absolute z-40 whitespace-nowrap rounded border border-slate-700 bg-[#1E2023] px-2.5 py-1 text-[11px] font-mono text-cyan-200 shadow-tactical-amber pointer-events-none ${positionClasses[position] || positionClasses.top}`}
         >
           {content}
         </div>

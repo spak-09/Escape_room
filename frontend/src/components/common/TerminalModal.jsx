@@ -85,7 +85,7 @@ export default function TerminalModal({
             role="dialog"
             aria-modal="true"
             aria-labelledby={title ? 'modal-title' : undefined}
-            className={`relative w-full ${maxWidth} rounded-lg border bg-[#0d121f] text-slate-100 shadow-2xl z-10 overflow-hidden ${borderVariants[variant] || borderVariants.default}`}
+            className={`relative w-full ${maxWidth} rounded-lg border bg-[#181A1D] text-slate-100 shadow-2xl z-10 overflow-hidden ${borderVariants[variant] || borderVariants.default}`}
             variants={modalContent}
             initial="hidden"
             animate="visible"

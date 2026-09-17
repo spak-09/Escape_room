@@ -5,7 +5,7 @@ import StatusBadge from '../common/StatusBadge';
 
 export default function AuthLayout() {
   return (
-    <div className="min-h-screen bg-[#0a0d14] text-slate-100 flex flex-col justify-between p-4 sm:p-6 relative overflow-hidden font-mono selection:bg-cyan-500/30 selection:text-cyan-200">
+    <div className="min-h-screen bg-[#0B0C0D] text-slate-100 flex flex-col justify-between p-4 sm:p-6 relative overflow-hidden font-mono selection:bg-cyan-500/30 selection:text-cyan-200">
       {/* Background microgrid & scanlines */}
       <div className="absolute inset-0 facility-grid opacity-20 pointer-events-none" />
       <div className="absolute inset-0 scanlines-overlay opacity-20 pointer-events-none" />

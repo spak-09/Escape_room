@@ -61,7 +61,7 @@ function RoomLoadingSkeleton() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 font-mono text-xs animate-pulse">
       <div className="lg:col-span-2 space-y-4">
-        <div className="rounded-lg border border-slate-800 bg-[#0d121f] p-6 space-y-4">
+        <div className="rounded-lg border border-slate-800 bg-[#181A1D] p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-slate-800 pb-3">
             <div className="h-4 w-48 bg-slate-800 rounded" />
             <div className="h-4 w-16 bg-slate-800 rounded" />
@@ -77,7 +77,7 @@ function RoomLoadingSkeleton() {
         </div>
       </div>
       <div className="space-y-4">
-        <div className="rounded-lg border border-slate-800 bg-[#0d121f] p-6 space-y-4">
+        <div className="rounded-lg border border-slate-800 bg-[#181A1D] p-6 space-y-4">
           <div className="h-4 w-32 bg-slate-800 rounded" />
           <div className="h-10 bg-slate-800 rounded" />
           <div className="h-10 bg-slate-800 rounded" />

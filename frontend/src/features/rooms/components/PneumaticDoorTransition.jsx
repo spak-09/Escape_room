@@ -57,7 +57,7 @@ export default function PneumaticDoorTransition({
   // In reduced-motion mode, show simple crossfade backdrop
   if (prefersReducedMotion) {
     return (
-      <div className="fixed inset-0 z-50 bg-[#07090f] flex items-center justify-center font-mono">
+      <div className="fixed inset-0 z-50 bg-[#080909] flex items-center justify-center font-mono">
         <div className="text-center space-y-3">
           <ShieldAlert className="w-10 h-10 text-cyan-400 mx-auto animate-pulse" />
           <p className="text-sm font-bold text-cyan-300 uppercase tracking-widest">{doorLabel}</p>
@@ -73,7 +73,7 @@ export default function PneumaticDoorTransition({
     <div className="fixed inset-0 z-50 pointer-events-auto overflow-hidden flex font-mono select-none">
       {/* Left Blast Door Panel */}
       <motion.div
-        className="relative w-1/2 h-full bg-[#0a0f1d] border-r-4 border-slate-700 shadow-2xl flex flex-col justify-between p-6 z-10"
+        className="relative w-1/2 h-full bg-[#121416] border-r-4 border-slate-700 shadow-2xl flex flex-col justify-between p-6 z-10"
         initial={{ x: '-100%' }}
         animate={{ x: isClosed ? '0%' : '-100%' }}
         transition={{ duration: duration / 2000, ease: [0.22, 1, 0.36, 1] }}
@@ -85,7 +85,7 @@ export default function PneumaticDoorTransition({
         </div>
 
         {/* Hazard Diagonal Stripe Border */}
-        <div className="absolute right-0 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(45deg,#f59e0b,#f59e0b_10px,#0f172a_10px,#0f172a_20px)] opacity-70" />
+        <div className="absolute right-0 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(45deg,#d69a45,#d69a45_10px,#1e2023_10px,#1e2023_20px)] opacity-70" />
 
         {/* Center Label Left Wing */}
         <div className="text-right pr-6 space-y-1">
@@ -101,7 +101,7 @@ export default function PneumaticDoorTransition({
 
       {/* Right Blast Door Panel */}
       <motion.div
-        className="relative w-1/2 h-full bg-[#0a0f1d] border-l-4 border-slate-700 shadow-2xl flex flex-col justify-between p-6 z-10"
+        className="relative w-1/2 h-full bg-[#121416] border-l-4 border-slate-700 shadow-2xl flex flex-col justify-between p-6 z-10"
         initial={{ x: '100%' }}
         animate={{ x: isClosed ? '0%' : '100%' }}
         transition={{ duration: duration / 2000, ease: [0.22, 1, 0.36, 1] }}
@@ -113,7 +113,7 @@ export default function PneumaticDoorTransition({
         </div>
 
         {/* Hazard Diagonal Stripe Border */}
-        <div className="absolute left-0 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(45deg,#f59e0b,#f59e0b_10px,#0f172a_10px,#0f172a_20px)] opacity-70" />
+        <div className="absolute left-0 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(45deg,#d69a45,#d69a45_10px,#1e2023_10px,#1e2023_20px)] opacity-70" />
 
         {/* Center Label Right Wing */}
         <div className="pl-6 space-y-1">
@@ -136,7 +136,7 @@ export default function PneumaticDoorTransition({
             exit={{ opacity: 0, scale: 0.9 }}
             transition={{ duration: 0.15 }}
           >
-            <div className="bg-[#0f172a] border-2 border-cyan-500/80 rounded-xl px-6 py-4 shadow-neon-cyan/40 flex items-center gap-4 text-center">
+            <div className="bg-[#1E2023] border-2 border-amber-500/70 rounded-xl px-6 py-4 shadow-tactical-amber flex items-center gap-4 text-center">
               <Lock className="w-6 h-6 text-cyan-400 animate-pulse" />
               <div>
                 <p className="text-xs font-bold text-cyan-300 uppercase tracking-widest">

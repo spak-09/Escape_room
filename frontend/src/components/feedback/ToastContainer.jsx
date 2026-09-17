@@ -14,14 +14,14 @@ export default function ToastContainer() {
   };
 
   const styleMap = {
-    info: 'border-cyan-500/50 bg-[#0c1424] text-cyan-200 shadow-tactical-cyan',
-    success: 'border-emerald-500/50 bg-[#0c1c1a] text-emerald-200 shadow-tactical-emerald',
-    warning: 'border-amber-500/50 bg-[#1c180e] text-amber-200 shadow-tactical-amber',
-    error: 'border-red-500/60 bg-[#1c0f14] text-red-200 shadow-tactical-crimson',
+    info: 'border-facility-info/50 bg-[#171B1F] text-facility-info',
+    success: 'border-emerald-500/50 bg-[#141A15] text-emerald-200 shadow-tactical-emerald',
+    warning: 'border-amber-500/50 bg-[#1E1910] text-amber-200 shadow-tactical-amber',
+    error: 'border-red-500/60 bg-[#1C1414] text-red-200 shadow-tactical-crimson',
   };
 
   const iconColorMap = {
-    info: 'text-cyan-400',
+    info: 'text-facility-info',
     success: 'text-emerald-400',
     warning: 'text-amber-400',
     error: 'text-red-400',

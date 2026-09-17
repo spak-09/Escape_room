@@ -2,7 +2,7 @@ import React from 'react';
 
 /**
  * TerminalCard UI Primitive
- * Dark military-grade facility container with neon border accents and corner crosshairs.
+ * Layered industrial facility container with a controlled edge highlight.
  */
 export default function TerminalCard({
   children,
@@ -16,13 +16,13 @@ export default function TerminalCard({
   ...props
 }) {
   const borderVariants = {
-    default: 'border-slate-800/90 bg-[#0f1422]',
-    surface: 'border-slate-800/90 bg-[#0f1422]',
-    elevated: 'border-slate-700/60 bg-[#151c2e]',
-    cyan: 'border-sky-500/30 bg-[#0f1422] shadow-tactical-cyan/15',
-    emerald: 'border-emerald-500/30 bg-[#0f1422] shadow-tactical-emerald/15',
-    crimson: 'border-rose-500/30 bg-[#0f1422] shadow-tactical-crimson/15',
-    amber: 'border-amber-500/30 bg-[#0f1422] shadow-tactical-amber/15',
+    default: 'border-slate-800/90 bg-[#121416]',
+    surface: 'border-slate-800/90 bg-[#121416]',
+    elevated: 'border-slate-700/60 bg-[#1E2023]',
+    cyan: 'border-amber-500/30 bg-[#121416] shadow-tactical-amber/15',
+    emerald: 'border-emerald-500/30 bg-[#121416] shadow-tactical-emerald/15',
+    crimson: 'border-rose-500/30 bg-[#121416] shadow-tactical-crimson/15',
+    amber: 'border-amber-500/30 bg-[#121416] shadow-tactical-amber/15',
   };
 
   return (
@@ -30,11 +30,11 @@ export default function TerminalCard({
       className={`relative rounded-lg border backdrop-blur-md transition-all duration-300 ${borderVariants[variant] || borderVariants.default} ${className}`}
       {...props}
     >
-      {/* Corner crosshairs */}
-      <span className="absolute -top-1 -left-1 w-2.5 h-2.5 border-t-2 border-l-2 border-cyan-400/80 pointer-events-none" />
-      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 border-t-2 border-r-2 border-cyan-400/80 pointer-events-none" />
-      <span className="absolute -bottom-1 -left-1 w-2.5 h-2.5 border-b-2 border-l-2 border-cyan-400/80 pointer-events-none" />
-      <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 border-b-2 border-r-2 border-cyan-400/80 pointer-events-none" />
+      {/* Corner registration marks */}
+      <span className="absolute -top-1 -left-1 w-2.5 h-2.5 border-t-2 border-l-2 border-amber-500/45 pointer-events-none" />
+      <span className="absolute -top-1 -right-1 w-2.5 h-2.5 border-t-2 border-r-2 border-amber-500/45 pointer-events-none" />
+      <span className="absolute -bottom-1 -left-1 w-2.5 h-2.5 border-b-2 border-l-2 border-amber-500/45 pointer-events-none" />
+      <span className="absolute -bottom-1 -right-1 w-2.5 h-2.5 border-b-2 border-r-2 border-amber-500/45 pointer-events-none" />
 
       {/* Header bar if title or icon is provided */}
       {(title || Icon || badge || headerAction) && (

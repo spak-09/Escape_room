@@ -169,7 +169,7 @@ export default function ScannerRoomShell({
           <div className="space-y-4">
             {/* View A: Optical Scanner Viewport */}
             {activeForensicTool === 'scanner' && (
-              <div className="rounded-lg border border-slate-800 bg-[#0a0d18] p-5 space-y-4">
+              <div className="rounded-lg border border-slate-800 bg-[#080909] p-5 space-y-4">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                   <div className="flex items-center gap-2 text-slate-300">
                     <Scan className="w-4 h-4 text-cyan-400 animate-pulse" />
@@ -183,7 +183,7 @@ export default function ScannerRoomShell({
                   <div className="relative w-36 h-36 bg-slate-900 border-2 border-cyan-500/60 rounded flex flex-col items-center justify-center p-2 shadow-neon-cyan/20 shrink-0 overflow-hidden">
                     <QrCode className="w-24 h-24 text-cyan-400" />
                     {/* Controlled laser line scan animation */}
-                    <div className="absolute inset-x-0 top-0 h-1 bg-cyan-400 shadow-[0_0_8px_#22d3ee] animate-pulse" />
+                    <div className="absolute inset-x-0 top-0 h-1 bg-cyan-400 shadow-[0_0_6px_rgba(214,154,69,0.45)] animate-pulse" />
                     <span className="text-[9px] text-slate-500 mt-1 uppercase">RAW QR MATRIX</span>
                   </div>
 
