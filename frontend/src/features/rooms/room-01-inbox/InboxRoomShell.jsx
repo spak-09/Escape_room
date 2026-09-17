@@ -185,7 +185,7 @@ export default function InboxRoomShell({
                     <AlertTriangle className="w-3.5 h-3.5" /> ROUTING MISMATCH FORENSICS:
                   </span>
                   <p className="text-slate-300">
-                    Return path routes responses to <code className="bg-slate-900 px-1.5 py-0.5 rounded text-red-300">shadow-c2.net</code>, diverging completely from the pretended Microsoft domain.
+                    Return path routes responses to <code className="bg-slate-900 px-1.5 py-0.5 rounded text-red-300">{evidence.replyTo?.split('@')[1] || evidence.replyTo || 'external server'}</code>, diverging from the pretended sender domain.
                   </p>
                 </div>
               )}
@@ -322,7 +322,7 @@ export default function InboxRoomShell({
                         </code>
                       </div>
                       <p className="text-slate-300 text-[11px] leading-relaxed">
-                        Notice the critical discrepancy: while the anchor displays a trusted domain (<strong className="text-cyan-300">security.microsoft.com</strong>), the actual hyperlink targets an unencrypted raw foreign IP terminal (<strong className="text-red-400">185.220.101.4</strong>) designed to harvest cadet credentials.
+                        {evidence.linkInspectionNotes || `Notice the critical discrepancy: while the anchor displays "${evidence.linkDisplayText || 'legitimate service'}", the actual hyperlink targets an unverified external destination ("${evidence.linkTarget}") designed to compromise workstation integrity.`}
                       </p>
                     </div>
                   )}

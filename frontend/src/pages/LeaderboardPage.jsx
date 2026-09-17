@@ -7,14 +7,19 @@ import StatusBadge from '../components/common/StatusBadge';
 
 export default function LeaderboardPage() {
   const [entries, setEntries] = useState([]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     async function fetchLeaderboard() {
+      setIsLoading(true);
+      setErrorMsg(null);
       try {
-        const res = await api.get('/leaderboard?page=1&limit=50');
-        // Contract returns { success: true, data: { leaderboard: [...], totalEntries, ... } }
+        const query = selectedDifficulty && selectedDifficulty !== 'all'
+          ? `/leaderboard?page=1&limit=50&difficulty=${selectedDifficulty}`
+          : '/leaderboard?page=1&limit=50';
+        const res = await api.get(query);
         setEntries(res.data?.leaderboard || []);
       } catch (err) {
         setErrorMsg(err?.message || 'Failed to retrieve verified leaderboard telemetry.');
@@ -23,7 +28,14 @@ export default function LeaderboardPage() {
       }
     }
     fetchLeaderboard();
-  }, []);
+  }, [selectedDifficulty]);
+
+  const difficultyTabs = [
+    { id: 'all', label: 'ALL TIERS' },
+    { id: 'beginner', label: 'BEGINNER (5Q)' },
+    { id: 'intermediate', label: 'INTERMEDIATE (15Q)' },
+    { id: 'expert', label: 'EXPERT (50Q)' },
+  ];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6 font-mono">
@@ -40,6 +52,24 @@ export default function LeaderboardPage() {
         </p>
       </div>
 
+      {/* Difficulty Filter Tabs */}
+      <div className="flex flex-wrap items-center justify-center gap-2 pb-2">
+        {difficultyTabs.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setSelectedDifficulty(tab.id)}
+            className={`px-3 py-1.5 rounded text-xs font-bold transition-all ${
+              selectedDifficulty === tab.id
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400 shadow-neon-cyan/20'
+                : 'bg-slate-900/60 text-slate-400 border border-slate-800 hover:border-slate-700'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {errorMsg && (
         <div className="rounded border border-red-500/50 bg-red-950/40 p-4 text-xs text-red-300 flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-red-400 shrink-0" />
@@ -49,7 +79,7 @@ export default function LeaderboardPage() {
 
       <TerminalCard
         title="GLOBAL VERIFIED RANKINGS"
-        subtitle="SORTED BY AUTHORITATIVE SCORE // TIE-BROKEN BY DURATION"
+        subtitle={`FILTER: ${selectedDifficulty.toUpperCase()} // SORTED BY NORMALIZED SCORE & TIME`}
         icon={Trophy}
         variant="cyan"
       >
@@ -63,7 +93,7 @@ export default function LeaderboardPage() {
           </div>
         ) : entries.length === 0 ? (
           <div className="py-12 text-center text-xs text-slate-500 italic">
-            No verified facility escapes recorded yet. Be the first cadet to contain all sectors and escape!
+            No verified facility escapes recorded for {selectedDifficulty.toUpperCase()} tier yet. Be the first cadet to contain all sectors and escape!
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -72,6 +102,7 @@ export default function LeaderboardPage() {
                 <tr className="border-b border-slate-800 text-slate-400 uppercase">
                   <th className="py-3 px-3">RANK</th>
                   <th className="py-3 px-3">CADET CALLSIGN</th>
+                  <th className="py-3 px-3">TIER</th>
                   <th className="py-3 px-3">SCORE</th>
                   <th className="py-3 px-3">DURATION</th>
                   <th className="py-3 px-3">ACCURACY</th>
@@ -83,6 +114,7 @@ export default function LeaderboardPage() {
               <tbody className="divide-y divide-slate-800/60 text-slate-300">
                 {entries.map((entry) => {
                   const isTopThree = entry.rank <= 3;
+                  const entryDiff = entry.difficulty || 'beginner';
                   return (
                     <tr
                       key={entry.id || entry.rank}
@@ -108,8 +140,24 @@ export default function LeaderboardPage() {
                       <td className="py-3 px-3 font-bold text-slate-100 flex items-center gap-1.5">
                         <span>{entry.username || 'ANONYMOUS CADET'}</span>
                       </td>
+                      <td className="py-3 px-3">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
+                          entryDiff === 'expert'
+                            ? 'border-red-500/40 text-red-300 bg-red-950/30'
+                            : entryDiff === 'intermediate'
+                            ? 'border-amber-500/40 text-amber-300 bg-amber-950/30'
+                            : 'border-cyan-500/40 text-cyan-300 bg-cyan-950/30'
+                        }`}>
+                          {entryDiff}
+                        </span>
+                      </td>
                       <td className="py-3 px-3 font-bold text-cyan-300 text-glow-cyan">
-                        {formatScore(entry.finalScore)}
+                        <span>{formatScore(entry.finalScore)}</span>
+                        {entry.normalizedScore != null && (
+                          <span className="text-emerald-400 text-[10px] ml-1 font-mono font-normal">
+                            ({entry.normalizedScore}%)
+                          </span>
+                        )}
                       </td>
                       <td className="py-3 px-3 text-slate-400 flex items-center gap-1">
                         <Clock className="w-3 h-3 text-slate-500" />

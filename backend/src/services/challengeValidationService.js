@@ -8,6 +8,11 @@ import { getRoom02ChallengeById } from '../data/challenges/room02.vault.js';
 import { getRoom03ChallengeById } from '../data/challenges/room03.scanner.js';
 import { getRoom04ChallengeById } from '../data/challenges/room04.message.js';
 import { getRoom05ChallengeById } from '../data/challenges/room05.control.js';
+import {
+  findChallengeById as qbFindChallengeById,
+  calculateMaxPossibleScore,
+  calculateNormalizedScore,
+} from './questionBankService.js';
 import { ROOM_MANIFESTS } from '../data/challenges/roomManifests.js';
 import { calculateChallengeScore } from './scoringService.js';
 import { buildEducationalPayload } from './adaptiveLearningService.js';
@@ -35,9 +40,12 @@ function normalizeContainmentAction(act) {
 }
 
 /**
- * Resolves a challenge definition from dedicated room modules or general manifests.
+ * Resolves a challenge definition from question bank or room manifests.
  */
 export function findChallengeById(challengeId) {
+  const qbFound = qbFindChallengeById(challengeId);
+  if (qbFound) return qbFound;
+
   const r1 = getRoom01ChallengeById(challengeId);
   if (r1) return r1;
   const r2 = getRoom02ChallengeById(challengeId);
@@ -124,6 +132,34 @@ export async function submitChallengeAction({
       403,
       'PREREQUISITES_INCOMPLETE'
     );
+  }
+
+  // Enforce sequential challenge terminal access within the room if roomQuestions are configured
+  const assignedMap = session.roomQuestions;
+  let assignedChallenges = [];
+  if (assignedMap) {
+    assignedChallenges = assignedMap instanceof Map
+      ? (assignedMap.get(challenge.roomId) || [])
+      : (assignedMap[challenge.roomId] || []);
+  }
+
+  if (assignedChallenges && Array.isArray(assignedChallenges) && assignedChallenges.length > 0) {
+    const expectedChallengeId = assignedChallenges[session.currentChallengeIndex];
+    if (expectedChallengeId && expectedChallengeId !== challengeId) {
+      const alreadyPassedIdx = assignedChallenges.indexOf(challengeId);
+      if (alreadyPassedIdx !== -1 && alreadyPassedIdx < session.currentChallengeIndex) {
+        throw new AppError(
+          'Challenge has already been successfully completed in this session.',
+          409,
+          'CHALLENGE_ALREADY_COMPLETED'
+        );
+      }
+      throw new AppError(
+        `Clearance sequence anomaly: Current challenge terminal requires "${expectedChallengeId}", but received "${challengeId}".`,
+        403,
+        'CHALLENGE_OUT_OF_ORDER'
+      );
+    }
   }
 
   const isRoom05 = challenge.roomId === 'room-05-control';
@@ -296,12 +332,61 @@ export async function submitChallengeAction({
       investigationBonus,
     });
 
+    session.currentScore += scoreDelta;
+
+    const totalChallengesInRoom = (assignedChallenges && Array.isArray(assignedChallenges) && assignedChallenges.length > 0)
+      ? assignedChallenges.length
+      : 1;
+    const hasMoreInRoom = (session.currentChallengeIndex + 1) < totalChallengesInRoom;
+
+    if (hasMoreInRoom) {
+      session.currentChallengeIndex += 1;
+      if (isRoom05) {
+        session.containmentState = {
+          activeThreats: [],
+          containedThreats: [],
+          containmentSequence: [],
+          isFullyContained: false,
+        };
+      }
+      await session.save();
+
+      // Atomically persist attempt
+      await ChallengeAttempt.create({
+        sessionId,
+        roomId: challenge.roomId || 'room-01-inbox',
+        challengeId,
+        actionTaken: actionId,
+        isCorrect: true,
+        scoreDelta,
+        lifeDelta: 0,
+        hintsUsed: hintsUsedCount,
+        timeElapsedSeconds,
+        inspectedArtifacts,
+      });
+
+      return {
+        isCorrect: true,
+        consequence: challenge.consequenceData?.onCorrect || 'Threat neutralized.',
+        scoreDelta,
+        currentScore: session.currentScore,
+        livesRemaining: session.livesRemaining,
+        roomCompleted: false,
+        escapeCompleted: false,
+        nextRoomIndex: session.currentRoomIndex,
+        currentChallengeIndex: session.currentChallengeIndex,
+        totalChallengesInRoom,
+        gameStatus: session.status,
+        investigationBonusAwarded: investigationBonus,
+        isFullyContained: isRoom05 ? true : undefined,
+      };
+    }
+
     const isFinalRoom = roomSector === ROOM_ORDER.length;
     const nextRoomIndex = isFinalRoom
       ? session.currentRoomIndex
       : Math.min(MAX_ROOMS, Math.max(session.currentRoomIndex, roomSector + 1));
 
-    session.currentScore += scoreDelta;
     session.currentRoomIndex = nextRoomIndex;
     session.currentChallengeIndex = 0;
 
@@ -314,6 +399,11 @@ export async function submitChallengeAction({
       if (session.containmentState) {
         session.containmentState.isFullyContained = true;
       }
+
+      const sessionDifficulty = (session.difficulty || 'beginner').toLowerCase();
+      const maxPossibleScore = calculateMaxPossibleScore(sessionDifficulty, session.roomQuestions);
+      const normalizedScore = calculateNormalizedScore(session.currentScore, maxPossibleScore);
+      session.normalizedScore = normalizedScore;
 
       await session.save();
 
@@ -336,7 +426,9 @@ export async function submitChallengeAction({
           sessionId: session._id,
           userId: session.userId,
           username: user?.username || 'Cadet',
+          difficulty: sessionDifficulty,
           finalScore: session.currentScore,
+          normalizedScore,
           totalDurationSeconds: durationSeconds,
           accuracyPercentage,
           livesRemaining: session.livesRemaining,
@@ -364,6 +456,7 @@ export async function submitChallengeAction({
     });
 
     return {
+      sessionId: session._id,
       isCorrect: true,
       consequence: challenge.consequenceData?.onCorrect || 'Threat neutralized.',
       scoreDelta,
@@ -371,6 +464,7 @@ export async function submitChallengeAction({
       livesRemaining: session.livesRemaining,
       roomCompleted: true,
       nextRoomIndex: session.currentRoomIndex,
+      currentChallengeIndex: 0,
       isFullyContained: isRoom05 ? true : undefined,
       escapeCompleted: isFinalRoom,
       gameStatus: session.status,
@@ -378,6 +472,7 @@ export async function submitChallengeAction({
       isLeaderboardEligible: session.isLeaderboardEligible,
       badgesEarned: isFinalRoom ? awardedBadges : undefined,
       investigationBonusAwarded: investigationBonus,
+      normalizedScore: isFinalRoom ? session.normalizedScore : undefined,
       containedThreats: isRoom05 ? session.containmentState?.containedThreats : undefined,
     };
   } else {
@@ -429,6 +524,7 @@ export async function submitChallengeAction({
     });
 
     return {
+      sessionId: session._id,
       isCorrect: false,
       consequence: challenge.consequenceData?.onIncorrect || 'Dangerous action executed.',
       lifeDelta: -1,

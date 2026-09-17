@@ -18,7 +18,7 @@ const SECTORS = [
 
 export default function GameHeader() {
   const navigate = useNavigate();
-  const { session, activeChallenge, requestHint } = useGameSession();
+  const { session, activeRoom, activeChallenge, requestHint } = useGameSession();
   const { isMuted, toggleMute, playClick } = useSound();
 
   const [isHintModalOpen, setIsHintModalOpen] = useState(false);
@@ -31,6 +31,9 @@ export default function GameHeader() {
   const currentRoomIndex = session?.currentRoomIndex || 1;
   const livesRemaining = typeof session?.livesRemaining === 'number' ? session.livesRemaining : 3;
   const currentScore = session?.currentScore || 0;
+  const sessionDifficulty = (session?.difficulty || 'beginner').toUpperCase();
+  const totalInSector = activeRoom?.totalChallengesInSector || 1;
+  const currentQuestionNumber = (session?.currentChallengeIndex || 0) + 1;
 
   const handleOpenHint = () => {
     playClick();
@@ -82,6 +85,20 @@ export default function GameHeader() {
             <span className="text-slate-300 uppercase">
               {SECTORS.find((s) => s.index === currentRoomIndex)?.label || 'ACTIVE INCIDENT'}
             </span>
+            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${
+              sessionDifficulty === 'EXPERT'
+                ? 'border-red-500/50 text-red-400 bg-red-950/40'
+                : sessionDifficulty === 'INTERMEDIATE'
+                ? 'border-amber-500/50 text-amber-400 bg-amber-950/40'
+                : 'border-cyan-500/50 text-cyan-400 bg-cyan-950/40'
+            }`}>
+              {sessionDifficulty}
+            </span>
+            {totalInSector > 1 && (
+              <span className="px-2 py-0.5 rounded border border-slate-700 bg-slate-900/80 text-slate-300 text-[10px] font-mono font-bold">
+                Q {currentQuestionNumber}/{totalInSector}
+              </span>
+            )}
           </div>
         </div>
 

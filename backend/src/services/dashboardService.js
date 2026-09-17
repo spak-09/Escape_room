@@ -49,7 +49,9 @@ export async function getDashboardSummary(userId) {
 
     activeSession = {
       sessionId: activeSessionDoc._id,
+      difficulty: activeSessionDoc.difficulty || 'beginner',
       currentRoomIndex: activeSessionDoc.currentRoomIndex,
+      currentChallengeIndex: activeSessionDoc.currentChallengeIndex || 0,
       currentRoomId: currentRoom,
       currentScore: activeSessionDoc.currentScore,
       livesRemaining: activeSessionDoc.livesRemaining,
@@ -83,6 +85,8 @@ export async function getDashboardSummary(userId) {
 
     return {
       sessionId: s._id,
+      difficulty: s.difficulty || 'beginner',
+      normalizedScore: s.normalizedScore ?? null,
       status: s.status,
       finalScore: s.currentScore,
       currentScore: s.currentScore,

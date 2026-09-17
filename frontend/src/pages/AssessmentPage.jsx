@@ -34,10 +34,53 @@ const TOPICS = [
   },
 ];
 
+const DIFFICULTY_OPTIONS = [
+  {
+    id: 'beginner',
+    title: 'BEGINNER',
+    subtitle: 'CADET RECONNAISSANCE',
+    tag: '1 Q / ROOM (5 TOTAL)',
+    duration: '10-15 MIN',
+    desc: 'Foundational cyber hygiene, domain typosquats, credential strength, basic quishing, urgent pretexting.',
+    maxScore: '5,000 PTS',
+    borderColor: 'border-cyan-500/60',
+    selectedBg: 'bg-cyan-950/40',
+    accentText: 'text-cyan-400',
+    glowColor: 'shadow-neon-cyan/20',
+  },
+  {
+    id: 'intermediate',
+    title: 'INTERMEDIATE',
+    subtitle: 'OPERATIONAL INVESTIGATION',
+    tag: '3 Q / ROOM (15 TOTAL)',
+    duration: '30-45 MIN',
+    desc: 'AiTM reverse proxies, Kerberoasting, dynamic QR redirect chains, VIP impersonation, multi-threat containment.',
+    maxScore: '15,000 PTS',
+    borderColor: 'border-amber-500/60',
+    selectedBg: 'bg-amber-950/40',
+    accentText: 'text-amber-400',
+    glowColor: 'shadow-tactical-amber/30',
+  },
+  {
+    id: 'expert',
+    title: 'EXPERT',
+    subtitle: 'MASTER THREAT HUNTING',
+    tag: '10 Q / ROOM (50 TOTAL)',
+    duration: '90-120 MIN',
+    desc: 'HTML smuggling, Golden Ticket forgery, zero-day SCADA wipes, ransomware hypervisor encryption, deepfake vishing.',
+    maxScore: '50,000 PTS',
+    borderColor: 'border-red-500/60',
+    selectedBg: 'bg-red-950/40',
+    accentText: 'text-red-400',
+    glowColor: 'shadow-tactical-crimson/40',
+  },
+];
+
 export default function AssessmentPage() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const [selectedDifficulty, setSelectedDifficulty] = useState(null);
   const [ratings, setRatings] = useState({
     phishingConfidence: 3,
     passwordConfidence: 3,
@@ -68,6 +111,12 @@ export default function AssessmentPage() {
     loadExisting();
   }, []);
 
+  const handleDifficultySelect = (diffId) => {
+    soundEngine.playClick();
+    setSelectedDifficulty(diffId);
+    setErrorMsg(null);
+  };
+
   const handleSliderChange = (key, value) => {
     soundEngine.playClick();
     setRatings((prev) => ({ ...prev, [key]: Number(value) }));
@@ -75,14 +124,19 @@ export default function AssessmentPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!selectedDifficulty) {
+      setErrorMsg('Mandatory requirement: You must explicitly select an assessment difficulty level (Beginner, Intermediate, or Expert) before entering the facility.');
+      return;
+    }
+
     setIsLoading(true);
     setErrorMsg(null);
 
     try {
       await assessmentService.submitAssessment(ratings);
       soundEngine.playUnlock();
-      toast.success('Security clearance calibrated successfully.');
-      navigate('/facility-entry');
+      toast.success(`Clearance calibrated: ${selectedDifficulty.toUpperCase()} LEVEL`);
+      navigate(`/facility-entry?difficulty=${selectedDifficulty}`);
     } catch (err) {
       setErrorMsg(err?.message || 'Failed to submit security clearance baseline assessment.');
     } finally {
@@ -100,20 +154,20 @@ export default function AssessmentPage() {
   ).toFixed(1);
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10 font-mono">
+    <div className="max-w-4xl mx-auto px-4 py-10 font-mono">
       <TerminalCard
         title="FACILITY SECURITY CLEARANCE ASSESSMENT"
-        subtitle="CALIBRATE INCIDENT RESPONSE SENSORS // BASELINE SURVEY"
+        subtitle="ASSESSMENT DIFFICULTY SELECTION & BASELINE CALIBRATION"
         icon={Sliders}
         variant="cyan"
       >
         {/* Briefing Text */}
         <div className="mb-6 text-xs text-slate-300 bg-[#1E2023] border border-slate-800 p-4 rounded leading-relaxed space-y-1">
           <p className="font-bold text-sky-400 uppercase tracking-wide">
-            PRE-ENTRY PROTOCOL NOTICE
+            MISSION ENGAGEMENT DIRECTIVE
           </p>
           <p className="text-slate-400">
-            Rate your operational confidence across core defense vectors. The facility's backend adaptive engine evaluates these ratings alongside actual incident response performance to deliver contextual micro-learning when necessary.
+            Select your assessment difficulty tier below. The facility kernel authoritatively determines the challenge bank, forensic depth, and required clearances per sector based on your selection.
           </p>
         </div>
 
@@ -125,7 +179,80 @@ export default function AssessmentPage() {
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6 text-xs">
+        <form onSubmit={handleSubmit} className="space-y-8 text-xs">
+          {/* SECTION 1: DIFFICULTY SELECTION TIERS */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <Shield className="w-4 h-4 text-cyan-400" />
+                <span>STEP 1: SELECT ASSESSMENT DIFFICULTY TIER</span>
+              </span>
+              <span className={`text-[10px] uppercase border px-2 py-0.5 rounded transition-colors ${
+                selectedDifficulty
+                  ? 'text-emerald-400 bg-emerald-950/40 border-emerald-500/40 font-bold'
+                  : 'text-amber-400 bg-amber-950/40 border-amber-500/40 font-bold animate-pulse'
+              }`}>
+                {selectedDifficulty ? `SELECTED: ${selectedDifficulty.toUpperCase()}` : 'SELECTION REQUIRED'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {DIFFICULTY_OPTIONS.map((diff) => {
+                const isSelected = selectedDifficulty === diff.id;
+
+                return (
+                  <div
+                    key={diff.id}
+                    onClick={() => handleDifficultySelect(diff.id)}
+                    className={`cursor-pointer p-4 rounded-lg border-2 transition-all flex flex-col justify-between space-y-3 relative ${
+                      isSelected
+                        ? `${diff.borderColor} ${diff.selectedBg} ${diff.glowColor}`
+                        : 'border-slate-800 bg-[#121416]/90 hover:border-slate-700'
+                    }`}
+                  >
+                    {/* Top Tier Tag */}
+                    <div className="flex items-center justify-between">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+                        isSelected ? `${diff.borderColor} ${diff.accentText}` : 'border-slate-700 text-slate-400'
+                      }`}>
+                        {diff.tag}
+                      </span>
+                      <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                        isSelected ? `${diff.borderColor} bg-slate-900` : 'border-slate-700'
+                      }`}>
+                        {isSelected && <div className={`w-2 h-2 rounded-full ${diff.accentText === 'text-cyan-400' ? 'bg-cyan-400' : diff.accentText === 'text-amber-400' ? 'bg-amber-400' : 'bg-red-400'}`} />}
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className={`text-sm font-black uppercase tracking-wider ${diff.accentText}`}>
+                        {diff.title}
+                      </h3>
+                      <p className="text-[10px] text-slate-400 uppercase tracking-tight mt-0.5">
+                        {diff.subtitle}
+                      </p>
+                    </div>
+
+                    <p className="text-slate-300 text-[11px] leading-relaxed">
+                      {diff.desc}
+                    </p>
+
+                    <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                      <span>EST. {diff.duration}</span>
+                      <span className="font-bold text-slate-300">{diff.maxScore}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* SECTION 2: TOPIC CONFIDENCE PROFILING */}
+          <div className="space-y-4 pt-4 border-t border-slate-800">
+            <span className="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+              <Sliders className="w-4 h-4 text-cyan-400" />
+              <span>STEP 2: CALIBRATE BASELINE OPERATIONAL CONFIDENCE</span>
+            </span>
           {TOPICS.map((topic) => {
             const currentVal = ratings[topic.key];
             const currentLabel = topic.labels[currentVal - 1];
@@ -172,6 +299,7 @@ export default function AssessmentPage() {
               </div>
             );
           })}
+          </div>
 
           {/* Tutorial Request Option */}
           <div className="p-4 rounded border border-sky-500/30 bg-sky-950/20 flex items-start gap-3">
@@ -200,18 +328,19 @@ export default function AssessmentPage() {
             <div>
               <span className="text-slate-500 text-[10px] uppercase block">CALIBRATED CLEARANCE PROFILE:</span>
               <span className="text-sky-300 font-bold text-xs">
-                INDEX {averageConfidence} / 5.0 // {ratings.tutorialRequested ? 'ONBOARDING ENABLED' : 'STANDARD CADET ENTRY'}
+                TIER: {selectedDifficulty ? selectedDifficulty.toUpperCase() : 'PENDING SELECTION (REQUIRED)'} // INDEX {averageConfidence} / 5.0 // {ratings.tutorialRequested ? 'ONBOARDING ENABLED' : 'STANDARD ENTRY'}
               </span>
             </div>
 
             <TerminalButton
               type="submit"
-              variant="primary"
+              variant={selectedDifficulty ? 'primary' : 'ghost'}
               size="lg"
               icon={ArrowRight}
               isLoading={isLoading}
+              disabled={!selectedDifficulty || isLoading}
             >
-              CONFIRM & ENTER FACILITY
+              {selectedDifficulty ? 'CONFIRM & ENTER FACILITY' : 'CHOOSE DIFFICULTY LEVEL'}
             </TerminalButton>
           </div>
         </form>

@@ -1,4 +1,4 @@
-import { findRoomManifest, sanitizeRoomForClient } from '../data/challenges/roomManifests.js';
+import { getRoomManifestForSession, sanitizeRoomForClient } from '../data/challenges/roomManifests.js';
 import { GameSession } from '../models/GameSession.js';
 import { AppError } from '../utils/AppError.js';
 import { GAME_STATUS } from '../utils/constants.js';
@@ -10,13 +10,7 @@ export async function getRoomDetails(req, res, next) {
   try {
     const { roomId } = req.params;
 
-    // 1. Look up room manifest
-    const roomManifest = findRoomManifest(roomId);
-    if (!roomManifest) {
-      throw new AppError(`Facility sector "${roomId}" not found.`, 404, 'ROOM_NOT_FOUND');
-    }
-
-    // 2. Look up player's active session
+    // 1. Look up player's active session
     const session = await GameSession.findOne({
       userId: req.user.id,
       status: GAME_STATUS.IN_PROGRESS,
@@ -28,6 +22,12 @@ export async function getRoomDetails(req, res, next) {
         403,
         'NO_ACTIVE_SESSION'
       );
+    }
+
+    // 2. Look up room manifest populated with session's assigned challenges
+    const roomManifest = getRoomManifestForSession(roomId, session);
+    if (!roomManifest) {
+      throw new AppError(`Facility sector "${roomId}" not found.`, 404, 'ROOM_NOT_FOUND');
     }
 
     // 3. Sequential progression enforcement
@@ -48,6 +48,7 @@ export async function getRoomDetails(req, res, next) {
         ...sanitizedData,
         session: {
           sessionId: session._id,
+          difficulty: session.difficulty,
           livesRemaining: session.livesRemaining,
           currentScore: session.currentScore,
           currentRoomIndex: session.currentRoomIndex,

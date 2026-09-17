@@ -1,11 +1,24 @@
 import { GameSession } from '../models/GameSession.js';
 import { AppError } from '../utils/AppError.js';
-import { GAME_STATUS, INITIAL_LIVES } from '../utils/constants.js';
+import { GAME_STATUS, INITIAL_LIVES, DIFFICULTY_LEVELS } from '../utils/constants.js';
+
+import { selectSessionQuestions } from './questionBankService.js';
 
 /**
  * Initializes a new game session or resumes an existing in-progress session.
  */
-export async function startSession(userId) {
+export async function startSession(userId, options = {}) {
+  const { difficulty: requestedDifficulty, restart = false } = options;
+  const difficulty = (requestedDifficulty || DIFFICULTY_LEVELS.BEGINNER).toLowerCase();
+
+  if (!Object.values(DIFFICULTY_LEVELS).includes(difficulty)) {
+    throw new AppError(
+      `Invalid difficulty level: "${requestedDifficulty}". Valid options are ${Object.values(DIFFICULTY_LEVELS).join(', ')}.`,
+      400,
+      'INVALID_DIFFICULTY'
+    );
+  }
+
   // Check if player already has an active playthrough
   const existingActiveSession = await GameSession.findOne({
     userId,
@@ -13,16 +26,36 @@ export async function startSession(userId) {
   });
 
   if (existingActiveSession) {
-    return {
-      session: existingActiveSession,
-      isResumed: true,
-      message: 'Active escape session resumed.',
-    };
+    const existingDifficulty = (existingActiveSession.difficulty || DIFFICULTY_LEVELS.BEGINNER).toLowerCase();
+    const shouldRestart = restart === true || (requestedDifficulty && existingDifficulty !== difficulty);
+
+    if (shouldRestart) {
+      existingActiveSession.status = GAME_STATUS.ABANDONED;
+      existingActiveSession.completionTime = new Date();
+      await existingActiveSession.save();
+    } else {
+      // If legacy session lacks roomQuestions, assign them dynamically
+      if (!existingActiveSession.roomQuestions || Object.keys(existingActiveSession.roomQuestions).length === 0) {
+        existingActiveSession.roomQuestions = selectSessionQuestions(existingDifficulty);
+        existingActiveSession.markModified('roomQuestions');
+        await existingActiveSession.save();
+      }
+
+      return {
+        session: existingActiveSession,
+        isResumed: true,
+        message: 'Active escape session resumed.',
+      };
+    }
   }
 
-  // Create new authoritative playthrough
+  // Create authoritative playthrough with randomized, difficulty-isolated questions
+  const roomQuestions = selectSessionQuestions(difficulty);
+
   const session = await GameSession.create({
     userId,
+    difficulty,
+    roomQuestions,
     currentRoomIndex: 1,
     currentChallengeIndex: 0,
     livesRemaining: INITIAL_LIVES,

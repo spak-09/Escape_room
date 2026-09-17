@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ShieldAlert, Terminal, AlertTriangle, ArrowRight } from 'lucide-react';
 import { useGameSession } from '../hooks/useGameSession';
 import { useSound } from '../hooks/useSound';
@@ -9,8 +9,14 @@ import PneumaticDoorTransition from '../features/rooms/components/PneumaticDoorT
 
 export default function FacilityIntroPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { startNewSession } = useGameSession();
   const { playAlarm, playUnlock } = useSound();
+
+  const rawDifficulty = new URLSearchParams(location.search).get('difficulty');
+  const validDifficulties = ['beginner', 'intermediate', 'expert'];
+  const isValidDifficulty = Boolean(rawDifficulty && validDifficulties.includes(rawDifficulty.toLowerCase()));
+  const queryDifficulty = isValidDifficulty ? rawDifficulty.toLowerCase() : null;
 
   const [step, setStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -18,8 +24,16 @@ export default function FacilityIntroPage() {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [targetRoomPath, setTargetRoomPath] = useState(null);
 
+  // Mandatory difficulty check: redirect to assessment if missing or invalid
+  useEffect(() => {
+    if (!isValidDifficulty) {
+      navigate('/assessment', { replace: true });
+    }
+  }, [isValidDifficulty, navigate]);
+
   const logs = [
     { text: '>> INITIATING FACILITY DIAGNOSTIC TELEMETRY...', color: 'text-cyan-400' },
+    { text: `>> ASSESSMENT CLEARANCE: ${(queryDifficulty || 'CALIBRATING').toUpperCase()} LEVEL CALIBRATED`, color: 'text-cyan-300 font-bold' },
     { text: '>> WARNING: ANOMALOUS PACKET SURGE DETECTED IN CORE GATEWAY', color: 'text-amber-400' },
     { text: '>> CRITICAL ALERT: UNAUTHORIZED SYSTEM BREACH IN PROGRESS', color: 'text-red-400 font-bold' },
     { text: '>> AUTOMATED EMERGENCY CONTAINMENT PROTOCOL INITIALIZED', color: 'text-red-400 font-bold' },
@@ -30,6 +44,7 @@ export default function FacilityIntroPage() {
   ];
 
   useEffect(() => {
+    if (!isValidDifficulty) return;
     playAlarm();
 
     const interval = setInterval(() => {
@@ -41,13 +56,17 @@ export default function FacilityIntroPage() {
     }, 850);
 
     return () => clearInterval(interval);
-  }, [playAlarm, logs.length]);
+  }, [playAlarm, logs.length, isValidDifficulty]);
 
   const handleEnterRoom = async () => {
+    if (!isValidDifficulty || !queryDifficulty) {
+      navigate('/assessment', { replace: true });
+      return;
+    }
     setIsLoading(true);
     setErrorMsg(null);
     try {
-      const session = await startNewSession();
+      const session = await startNewSession(queryDifficulty, true);
       playUnlock();
       const currentSector = session?.currentRoomIndex || 1;
       const targetRoomId = SECTOR_MAP[currentSector] || 'room-01-inbox';
@@ -64,6 +83,10 @@ export default function FacilityIntroPage() {
       navigate(targetRoomPath);
     }
   };
+
+  if (!isValidDifficulty) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-[#080909] text-slate-100 flex items-center justify-center p-4 relative overflow-hidden font-mono">

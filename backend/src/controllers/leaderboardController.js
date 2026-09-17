@@ -6,8 +6,8 @@ import * as leaderboardService from '../services/leaderboardService.js';
  */
 export async function getLeaderboard(req, res, next) {
   try {
-    const { page, limit } = req.query;
-    const result = await leaderboardService.getVerifiedLeaderboard({ page, limit });
+    const { page, limit, difficulty } = req.query;
+    const result = await leaderboardService.getVerifiedLeaderboard({ page, limit, difficulty });
 
     return res.status(200).json({
       success: true,

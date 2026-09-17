@@ -37,3 +37,15 @@ export const USER_ROLES = Object.freeze({
   PLAYER: 'player',
   ADMIN: 'admin',
 });
+
+export const DIFFICULTY_LEVELS = Object.freeze({
+  BEGINNER: 'beginner',
+  INTERMEDIATE: 'intermediate',
+  EXPERT: 'expert',
+});
+
+export const DIFFICULTY_QUESTION_COUNTS = Object.freeze({
+  beginner: { perRoom: 1, total: 5 },
+  intermediate: { perRoom: 3, total: 15 },
+  expert: { perRoom: 10, total: 50 },
+});

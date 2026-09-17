@@ -152,8 +152,9 @@ export default function EscapeResultPage() {
               CYBERSECURITY INCIDENT DEBRIEF
             </h1>
             <p className="text-xs text-slate-400">
-              MISSION RUN ID: <code className="text-cyan-300 font-bold">{sessionId}</code> // CLOUD KERNEL STATUS:{' '}
-              <span className="text-emerald-400 font-bold">{report.status}</span>
+              MISSION RUN ID: <code className="text-cyan-300 font-bold">{sessionId}</code> // STATUS:{' '}
+              <span className="text-emerald-400 font-bold">{report.status}</span> // DIFFICULTY:{' '}
+              <span className="text-cyan-300 font-bold uppercase">{report.difficulty || 'BEGINNER'}</span>
             </p>
           </div>
 
@@ -162,11 +163,14 @@ export default function EscapeResultPage() {
             <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
               AUTHORITATIVE FINAL SCORE
             </span>
-            <div className="text-3xl font-black text-emerald-300 text-glow-emerald">
-              {formatScore(report.finalScore || report.overallScore || 0)}
+            <div className="text-3xl font-black text-emerald-300 text-glow-emerald flex items-baseline justify-end gap-2">
+              <span>{formatScore(report.finalScore || report.overallScore || 0)}</span>
+              {report.normalizedScore != null && (
+                <span className="text-base font-bold text-emerald-400 font-mono">({report.normalizedScore}%)</span>
+              )}
             </div>
             <span className="text-[10px] text-emerald-400/80 font-bold">
-              ACCURACY: {report.accuracy ?? report.accuracyPercentage ?? 100}%
+              ACCURACY: {report.accuracy ?? report.accuracyPercentage ?? 100}% // TIER: {(report.difficulty || 'beginner').toUpperCase()}
             </span>
           </div>
         </motion.div>
@@ -400,9 +404,15 @@ export default function EscapeResultPage() {
               </TerminalButton>
             </Link>
 
+            <Link to="/assessment">
+              <TerminalButton variant="primary" size="md" icon={RotateCcw}>
+                NEW ESCAPE RUN
+              </TerminalButton>
+            </Link>
+
             <Link to="/dashboard">
-              <TerminalButton variant="primary" size="md" icon={Home}>
-                RETURN TO DASHBOARD
+              <TerminalButton variant="ghost" size="md" icon={Home}>
+                CADET DASHBOARD
               </TerminalButton>
             </Link>
           </div>

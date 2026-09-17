@@ -77,8 +77,8 @@ export default function GameRoomPage() {
 
     // Case 1: Escape Completed (Game Cleared)
     if (lastSubmissionResult.escapeCompleted) {
+      const sid = session?.sessionId || session?._id || lastSubmissionResult?.sessionId;
       clearLastSubmissionResult();
-      const sid = session?.sessionId;
       if (sid) {
         navigate(`/game/escape-result/${sid}`, { replace: true });
       } else {
@@ -98,9 +98,18 @@ export default function GameRoomPage() {
       }
     }
 
+    // Case 2b: Multi-question progression inside same sector -> stay in room and load next challenge
+    if (lastSubmissionResult.isCorrect && !lastSubmissionResult.roomCompleted) {
+      clearLastSubmissionResult();
+      if (roomId) {
+        loadRoom(roomId);
+      }
+      return;
+    }
+
     // Case 3: Incorrect submission (and player didn't open debrief) -> dismiss consequence
     clearLastSubmissionResult();
-  }, [lastSubmissionResult, clearLastSubmissionResult, navigate]);
+  }, [lastSubmissionResult, clearLastSubmissionResult, navigate, roomId, loadRoom, session]);
 
   // Handle view debrief from ConsequenceModal
   const handleViewDebrief = useCallback(() => {
@@ -122,23 +131,21 @@ export default function GameRoomPage() {
     }
   }, [pendingNextRoomId, navigate]);
 
-  // Handle Game Over / Lockdown Breach restart
+  // Handle Game Over / Lockdown Breach restart -> route to difficulty assessment for fresh run
   const handleRestartSession = useCallback(async () => {
     setIsRestartingSession(true);
     try {
       if (session?.sessionId) {
         await abandonActiveSession().catch(() => {});
       }
-      const newSession = await startNewSession();
       clearLastSubmissionResult();
-      const firstRoomId = SECTOR_MAP[newSession?.currentRoomIndex || 1] || 'room-01-inbox';
-      navigate(`/game/room/${firstRoomId}`);
+      navigate('/assessment');
     } catch (err) {
       setLocalError(err?.message || 'Failed to re-engage facility session.');
     } finally {
       setIsRestartingSession(false);
     }
-  }, [session, abandonActiveSession, startNewSession, clearLastSubmissionResult, navigate]);
+  }, [session, abandonActiveSession, clearLastSubmissionResult, navigate]);
 
   // Determine modal states
   const livesRemaining = typeof session?.livesRemaining === 'number' ? session.livesRemaining : 3;

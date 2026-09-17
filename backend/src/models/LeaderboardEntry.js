@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { DIFFICULTY_LEVELS } from '../utils/constants.js';
 
 const leaderboardEntrySchema = new mongoose.Schema(
   {
@@ -18,10 +19,24 @@ const leaderboardEntrySchema = new mongoose.Schema(
       type: String,
       required: [true, 'Player username is required'],
     },
+    difficulty: {
+      type: String,
+      enum: Object.values(DIFFICULTY_LEVELS),
+      default: DIFFICULTY_LEVELS.BEGINNER,
+      required: true,
+      index: true,
+    },
     finalScore: {
       type: Number,
       required: [true, 'Final score is required'],
       min: 0,
+    },
+    normalizedScore: {
+      type: Number,
+      required: [true, 'Normalized score is required'],
+      min: 0,
+      max: 100,
+      default: 0,
     },
     totalDurationSeconds: {
       type: Number,
@@ -54,7 +69,8 @@ const leaderboardEntrySchema = new mongoose.Schema(
   }
 );
 
-// High performance index for leaderboard sorting
+// High performance indexes for leaderboard sorting
+leaderboardEntrySchema.index({ difficulty: 1, normalizedScore: -1, totalDurationSeconds: 1 });
 leaderboardEntrySchema.index({ finalScore: -1, totalDurationSeconds: 1 });
 
 export const LeaderboardEntry = mongoose.model('LeaderboardEntry', leaderboardEntrySchema);

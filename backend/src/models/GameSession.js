@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { GAME_STATUS, INITIAL_LIVES } from '../utils/constants.js';
+import { GAME_STATUS, INITIAL_LIVES, DIFFICULTY_LEVELS } from '../utils/constants.js';
 
 const gameSessionSchema = new mongoose.Schema(
   {
@@ -30,6 +30,23 @@ const gameSessionSchema = new mongoose.Schema(
       type: Number,
       default: 0,
       min: 0,
+    },
+    normalizedScore: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
+    difficulty: {
+      type: String,
+      enum: Object.values(DIFFICULTY_LEVELS),
+      default: DIFFICULTY_LEVELS.BEGINNER,
+      required: true,
+      index: true,
+    },
+    roomQuestions: {
+      type: mongoose.Schema.Types.Mixed,
+      default: {},
     },
     hintsUsed: {
       type: [String],

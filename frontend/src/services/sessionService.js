@@ -4,8 +4,11 @@ export const sessionService = {
   /**
    * Initialize a new escape room playthrough or resume active session
    */
-  async startSession() {
-    const res = await api.post('/session/start');
+  async startSession(difficulty, restart = false) {
+    const payload = {};
+    if (difficulty) payload.difficulty = difficulty;
+    if (restart) payload.restart = restart;
+    const res = await api.post('/session/start', payload);
     return res.data;
   },
 

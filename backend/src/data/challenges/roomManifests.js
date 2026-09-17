@@ -1,4 +1,5 @@
 import { TOPICS } from '../../utils/constants.js';
+import { findChallengeById } from '../../services/questionBankService.js';
 
 /**
  * Authoritative room specifications.
@@ -324,8 +325,8 @@ export function sanitizeRoomForClient(roomManifest, currentChallengeIndex = 0) {
       topic: challenge.topic,
       difficulty: challenge.difficulty,
       prompt: challenge.prompt,
-      evidence: challenge.evidence,
-      availableActions: challenge.availableActions,
+      evidence: challenge.evidence || challenge.sanitizedEvidence,
+      availableActions: challenge.availableActions || challenge.allowedActions,
       hasHints: Boolean(challenge.hints && challenge.hints.length > 0),
     },
   };
@@ -341,4 +342,32 @@ export function findRoomManifest(roomIdOrSector) {
   }
 
   return ROOM_MANIFESTS.find((r) => r.id === roomIdOrSector);
+}
+
+/**
+ * Dynamically constructs the room manifest populated with the specific challenges
+ * selected for the player's active session.
+ */
+export function getRoomManifestForSession(roomIdOrSector, session = null) {
+  const baseManifest = findRoomManifest(roomIdOrSector);
+  if (!baseManifest) return null;
+  if (!session || !session.roomQuestions) return baseManifest;
+
+  const questionsMap = session.roomQuestions;
+  const assignedIds = questionsMap instanceof Map
+    ? questionsMap.get(baseManifest.id)
+    : questionsMap[baseManifest.id];
+
+  if (!assignedIds || !Array.isArray(assignedIds) || assignedIds.length === 0) {
+    return baseManifest;
+  }
+
+  const sessionChallenges = assignedIds
+    .map((id) => findChallengeById(id))
+    .filter(Boolean);
+
+  return {
+    ...baseManifest,
+    challenges: sessionChallenges.length > 0 ? sessionChallenges : baseManifest.challenges,
+  };
 }

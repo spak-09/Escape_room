@@ -24,7 +24,7 @@ export default function AuthPage() {
   const [rateLimitCooldown, setRateLimitCooldown] = useState(0);
 
   // Return URL after authentication
-  const returnUrl = location.state?.returnUrl || '/facility-entry';
+  const returnUrl = location.state?.returnUrl || '/dashboard';
 
   // Countdown timer for rate limiting
   useEffect(() => {

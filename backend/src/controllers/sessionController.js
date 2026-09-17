@@ -5,7 +5,8 @@ import * as sessionService from '../services/sessionService.js';
  */
 export async function start(req, res, next) {
   try {
-    const result = await sessionService.startSession(req.user.id);
+    const { difficulty, restart } = req.body || {};
+    const result = await sessionService.startSession(req.user.id, { difficulty, restart });
     const statusCode = result.isResumed ? 200 : 201;
 
     return res.status(statusCode).json({

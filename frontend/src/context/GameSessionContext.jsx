@@ -39,7 +39,9 @@ export function GameSessionProvider({ children }) {
     return {
       ...rawSession,
       sessionId: rawSession._id || rawSession.sessionId,
+      difficulty: rawSession.difficulty || null,
       currentRoomIndex: rawSession.currentRoomIndex || 1,
+      currentChallengeIndex: rawSession.currentChallengeIndex || 0,
       livesRemaining: typeof rawSession.livesRemaining === 'number' ? rawSession.livesRemaining : 3,
       currentScore: typeof rawSession.currentScore === 'number' ? rawSession.currentScore : 0,
       hintsUsed: Array.isArray(rawSession.hintsUsed) ? rawSession.hintsUsed : [],
@@ -82,11 +84,11 @@ export function GameSessionProvider({ children }) {
   }, [isAuthenticated, fetchActiveSession]);
 
   // Start new session or resume existing
-  const startNewSession = useCallback(async () => {
+  const startNewSession = useCallback(async (difficulty, restart = false) => {
     setIsLoadingSession(true);
     setError(null);
     try {
-      const res = await sessionService.startSession();
+      const res = await sessionService.startSession(difficulty, restart);
       const normalized = normalizeSession(res.session);
       setSession(normalized);
       soundEngine.playUnlock();
@@ -158,6 +160,7 @@ export function GameSessionProvider({ children }) {
             currentScore: typeof result.currentScore === 'number' ? result.currentScore : prev.currentScore,
             livesRemaining: typeof result.livesRemaining === 'number' ? result.livesRemaining : prev.livesRemaining,
             currentRoomIndex: typeof result.nextRoomIndex === 'number' ? result.nextRoomIndex : prev.currentRoomIndex,
+            currentChallengeIndex: typeof result.currentChallengeIndex === 'number' ? result.currentChallengeIndex : prev.currentChallengeIndex,
             status: result.gameStatus || prev.status,
           };
         });

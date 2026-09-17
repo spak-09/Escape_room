@@ -74,12 +74,18 @@ export default function DashboardPage() {
 
   const handleResumeEscape = () => {
     playClick();
-    if (activeSession) {
+    const validDifficulties = ['beginner', 'intermediate', 'expert'];
+    const hasValidActiveSession =
+      activeSession &&
+      activeSession.difficulty &&
+      validDifficulties.includes(activeSession.difficulty.toLowerCase());
+
+    if (hasValidActiveSession) {
       const roomIdx = activeSession.currentRoomIndex || 1;
       const targetRoomId = activeSession.currentRoomId || SECTOR_MAP[roomIdx] || 'room-01-inbox';
       navigate(`/game/room/${targetRoomId}`);
     } else {
-      navigate('/facility-entry');
+      navigate('/assessment');
     }
   };
 
@@ -109,7 +115,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Link to="/facility-entry">
+          <Link to="/assessment">
             <TerminalButton variant="primary" size="md" icon={Play}>
               NEW ESCAPE RUN
             </TerminalButton>
@@ -129,9 +135,12 @@ export default function DashboardPage() {
         <div className="relative rounded-xl border-2 border-emerald-500/80 bg-gradient-to-r from-[#141A15] to-[#0E110E] p-6 sm:p-8 shadow-tactical-emerald overflow-hidden">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
             <div className="space-y-3 max-w-2xl">
-              <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-widest">
+              <div className="flex flex-wrap items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-widest">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                <span>ACTIVE ESCAPE MISSION IN PROGRESS // PERSISTENCE SECURED</span>
+                <span>ACTIVE ESCAPE MISSION IN PROGRESS</span>
+                <span className="px-2 py-0.5 rounded border border-emerald-500/50 bg-emerald-950/60 text-emerald-300 text-[10px]">
+                  TIER: {(activeSession.difficulty || 'beginner').toUpperCase()}
+                </span>
               </div>
               <h2 className="text-2xl font-black text-slate-100 uppercase tracking-wide">
                 SECTOR 0{activeSession.currentRoomIndex || 1}:{' '}
@@ -192,9 +201,12 @@ export default function DashboardPage() {
               >
                 CONTINUE ESCAPE NOW
               </TerminalButton>
-              <span className="text-[10px] text-slate-500 text-center lg:text-right mt-2">
-                Pneumatic bulkhead ready for entry
-              </span>
+              <Link
+                to="/assessment"
+                className="text-[10px] text-slate-400 hover:text-cyan-300 underline text-center lg:text-right mt-2 transition-colors"
+              >
+                Change Difficulty / New Run
+              </Link>
             </div>
           </div>
         </div>
@@ -210,13 +222,13 @@ export default function DashboardPage() {
               READY FOR FACILITY INTRUSION CONTAINMENT
             </h2>
             <p className="text-xs text-slate-400 max-w-xl leading-relaxed">
-              No escape session is currently in progress. Initiate facility access to begin a full escape playthrough across all 5 sealed bulkheads.
+              No escape session is currently in progress. Select an assessment difficulty tier to begin a full escape playthrough across all 5 sealed bulkheads.
             </p>
           </div>
 
-          <Link to="/facility-entry" className="shrink-0 w-full sm:w-auto">
+          <Link to="/assessment" className="shrink-0 w-full sm:w-auto">
             <TerminalButton variant="primary" size="lg" icon={Play} fullWidth>
-              ENTER FACILITY SECTOR 01
+              SELECT DIFFICULTY & ENTER
             </TerminalButton>
           </Link>
         </div>
@@ -355,6 +367,7 @@ export default function DashboardPage() {
                 <tr className="border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
                   <th className="py-3 px-3">DATE / TIME</th>
                   <th className="py-3 px-3">MISSION STATUS</th>
+                  <th className="py-3 px-3">DIFFICULTY</th>
                   <th className="py-3 px-3">SCORE</th>
                   <th className="py-3 px-3">LIVES LEFT</th>
                   <th className="py-3 px-3">DURATION</th>
@@ -365,6 +378,7 @@ export default function DashboardPage() {
                 {gameHistory.map((run, idx) => {
                   const isCompleted = run.status === 'COMPLETED';
                   const sid = run.sessionId || run._id;
+                  const runDiff = run.difficulty || 'beginner';
 
                   return (
                     <tr key={sid || idx} className="hover:bg-slate-900/40 transition-colors">
@@ -378,8 +392,22 @@ export default function DashboardPage() {
                           label={run.status}
                         />
                       </td>
+                      <td className="py-3 px-3">
+                        <span className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${
+                          runDiff === 'expert'
+                            ? 'border-red-500/40 text-red-300 bg-red-950/30'
+                            : runDiff === 'intermediate'
+                            ? 'border-amber-500/40 text-amber-300 bg-amber-950/30'
+                            : 'border-cyan-500/40 text-cyan-300 bg-cyan-950/30'
+                        }`}>
+                          {runDiff}
+                        </span>
+                      </td>
                       <td className="py-3 px-3 font-bold text-cyan-300">
-                        {formatScore(run.finalScore || run.currentScore || 0)}
+                        <span>{formatScore(run.finalScore || run.currentScore || 0)}</span>
+                        {run.normalizedScore != null && (
+                          <span className="text-emerald-400 text-[10px] ml-1 font-mono">({run.normalizedScore}%)</span>
+                        )}
                       </td>
                       <td className="py-3 px-3">
                         <span className="text-red-400 font-bold">{run.livesRemaining ?? 'N/A'} / 3</span>

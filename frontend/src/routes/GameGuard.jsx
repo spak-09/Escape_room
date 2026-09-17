@@ -3,7 +3,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import { useGameSession, ROOM_ID_TO_SECTOR, SECTOR_MAP } from '../hooks/useGameSession';
 
 export default function GameGuard({ children }) {
-  const { session, isLoadingSession, fetchActiveSession } = useGameSession();
+  const { session, isLoadingSession, fetchActiveSession, lastSubmissionResult } = useGameSession();
   const { roomId } = useParams();
 
   useEffect(() => {
@@ -26,9 +26,35 @@ export default function GameGuard({ children }) {
     );
   }
 
-  // If no active in-progress session, route to dashboard
-  if (!session || session.status !== 'IN_PROGRESS') {
+  // 1. Victory State: If escape was just completed and consequence modal is active, let GameRoomPage display it
+  if (lastSubmissionResult?.escapeCompleted) {
+    return children;
+  }
+
+  // 2. Completed State: If session is already COMPLETED, redirect to authoritative escape debrief
+  if (session && session.status === 'COMPLETED') {
+    const targetSessionId = session.sessionId || session._id;
+    if (targetSessionId) {
+      return <Navigate to={`/game/escape-result/${targetSessionId}`} replace />;
+    }
     return <Navigate to="/dashboard" replace />;
+  }
+
+  // 3. Failed State: If operational lives depleted, let GameRoomPage display the lockdown breach modal
+  if (session && (session.status === 'FAILED' || session.livesRemaining <= 0 || lastSubmissionResult?.gameOver)) {
+    return children;
+  }
+
+  // 4. In-progress session check: must have active status and valid difficulty clearance
+  const validDifficulties = ['beginner', 'intermediate', 'expert'];
+  const hasValidSession =
+    session &&
+    session.status === 'IN_PROGRESS' &&
+    session.difficulty &&
+    validDifficulties.includes(session.difficulty.toLowerCase());
+
+  if (!hasValidSession) {
+    return <Navigate to="/assessment" replace />;
   }
 
   // Check sector prerequisite enforcement

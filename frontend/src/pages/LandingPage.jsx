@@ -46,7 +46,7 @@ export default function LandingPage() {
           </p>
 
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link to={isAuthenticated ? '/facility-entry' : '/auth'}>
+            <Link to={isAuthenticated ? '/dashboard' : '/auth'}>
               <TerminalButton size="lg" variant="primary" icon={Terminal}>
                 {isAuthenticated ? 'INITIATE FACILITY ACCESS' : 'CADET AUTHENTICATION'}
               </TerminalButton>
